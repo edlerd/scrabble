@@ -1,0 +1,340 @@
+<html>
+<head>
+<script>
+/**
+ * global state vars
+ */
+var game = new Array();
+var activeLetters = new Array();
+var letters = [
+				'A','A','A','A','A','A','A','A','A',
+				'B','B',
+				'C','C',
+				'D','D','D','D',
+				'E','E','E','E','E','E','E','E','E','E','E','E',
+				'F','F',
+				'G','G','G',
+				'H','H',
+				'I','I','I','I','I','I','I','I','I',
+				'J',
+				'K',
+				'L','L','L','L',
+				'M','M',
+				'N','N','N','N','N','N',
+				'O','O','O','O','O','O','O','O',
+				'P','P',
+				'Q',
+				'R','R','R','R','R','R',
+				'S','S','S','S',
+				'T','T','T','T','T','T',
+				'U','U','U','U',
+				'V','V',
+				'W','W',
+				'X',
+				'Y','Y',
+				'Z',
+				'Ä',
+				'Ö',
+				'Ü',
+				];
+var pointsPerLetter = {
+				'A':1,
+				'B':3,
+				'C':4,
+				'D':1,
+				'E':1,
+				'F':4,
+				'G':2,
+				'H':2,
+				'I':1,
+				'J':6,
+				'K':4,
+				'L':2,
+				'M':3,
+				'N':1,
+				'O':2,
+				'P':4,
+				'Q':10,
+				'R':1,
+				'S':1,
+				'T':1,
+				'U':1,
+				'V':6,
+				'W':3,
+				'X':8,
+				'Y':10,
+				'Z':3,
+				'Ä':6,
+				'Ö':8,
+				'Ü':6
+				};
+				
+var player_1_letters = new Array();
+var player_1_points  = 0;
+
+var player_2_letters = new Array();
+var player_2_points  = 0;
+
+var allText =[];
+txtFile = new XMLHttpRequest();
+txtFile.open("GET", "file:///C:/Users/razor/Desktop/scrabble/deutsch.txt", true);
+txtFile.onreadystatechange = function()
+{
+	if (txtFile.readyState === 4) {
+		allText = txtFile.responseText.toUpperCase();
+	}
+};
+txtFile.send(null);
+
+function setLetter(elem) {
+
+	// get current field
+	targetPosition = elem.srcElement.id.substring(1,elem.srcElement.id.length).split("_");
+	x = parseInt(targetPosition[0]) - 1;
+	y = parseInt(targetPosition[1]) - 1;
+
+	// if there is already a active tile, remove it.
+	if (elem.target.bgColor == "Yellow") {
+		letter = game[x*15+y];
+		game[x*15+y] = "";
+		activeLetters.splice(activeLetters.indexOf(letter,1));
+		player_1_letters.push(letter);
+		elem.target.bgColor = "White";
+		printLetters();
+		printBoard();
+		return;
+	}
+	
+	// set the letter
+	var letter = window.prompt("Welchen Buchstaben möchtest du hier setzen?","").toUpperCase();
+	var letter_position = player_1_letters.indexOf(letter);
+	if (letter_position == -1) {
+		alert("Den Buchstaben hast du nicht auf der Hand!");
+		return;
+	}
+	game[x*15 + y] = letter;
+	player_1_letters.splice(letter_position,1);
+	activeLetters.push(x*15 + y);
+	printLetters();
+	printBoard();
+	
+	// update play button
+	var points = calculatePoints();
+	if (points) {
+		document.getElementById("move").innerHTML = "play it (" + points + ")";
+		document.getElementById("move").disabled = false;
+	} else {
+		document.getElementById("move").disabled = true;
+	}
+}
+
+// get new random tiles to fill stack
+function drawTiles() {
+	while (player_1_letters.length < 7 && letters.length > 0) {
+		var i = Math.floor(Math.random() * letters.length);
+		player_1_letters.push(letters[i]);
+		letters.splice(i,1);
+	}
+}
+
+// refresh letter board of player
+function printLetters() {
+	document.getElementById("player_1_letters").innerHTML =player_1_letters.join();
+}
+
+// refresh game board
+function printBoard() {
+	for (i=0; i<15; i++) {
+		for (j=0; j<15; j++) {
+			board.rows[i].cells[j].innerHTML=game[i * 15 + j];
+			if (activeLetters.indexOf(i * 15 + j) != -1) {
+				board.rows[i].cells[j].bgColor = "Yellow";
+			} else {
+				board.rows[i].cells[j].bgColor = "White";
+			}
+		}
+	}
+}
+
+// take all current tiles back
+function resetCurrentTiles() {
+	for (i=0; i<activeLetters.length; i++) {
+		pos = activeLetters[i];
+		player_1_letters.push(game[pos]);
+		game[pos] = '';
+	}
+	activeLetters.length=0;
+	printLetters();
+	printBoard();
+}
+
+// dictionary lookup
+function isValidWord(word) {
+	if (allText.indexOf("\n" + word + "\n") != -1) {
+		return true;
+	}
+	return false;
+}
+
+// find all affected words + calculate points
+function findWordsByActiveLetters() {
+	words = new Array();
+	pointSum = 0;
+	for (i=0; i < activeLetters.length; i++) {
+		cur = activeLetters[i];
+		/*
+		 * horizontal words
+		 */
+		// find leftest letter
+		h=cur;
+		while (game[h-1] != "" && (h % 15) > 0) {
+			h -=1;
+		}
+		//construct word
+		word = '';
+		points = 0;
+		multiplier = 1;
+		while (game[h] != "" && (h % 15) != 14) {
+			word = word.concat(game[h]);
+			points += pointsPerLetter[game[h]];
+			h+=1;
+		}
+		if (word.length > 1 && words.indexOf(word) == -1) {
+			words.push(word);
+			pointSum += points * multiplier;
+		}
+		
+		/*
+		 * vertical words
+		 */
+		// find highest letter
+		v=cur;
+		while (game[v-15] != "" && v > 14) {
+			v -= 15;
+		}
+		//construct word
+		word = '';
+		points = 0;
+		multiplier = 1;
+		while (game[v] != "" && v < 255) {
+			word = word.concat(game[v]);
+			points += pointsPerLetter[game[v]];
+			v += 15;
+		}
+		if (word.length > 1 && words.indexOf(word) == -1) {
+			words.push(word);
+			pointSum += points * multiplier;
+		}
+	}
+	return [words, pointSum];
+}
+
+// is the current position of new letters valid?
+function letterPositionValid() {
+	activeLetters.sort();
+	var start = activeLetters[0];
+	var diff = activeLetters[1] - activeLetters[0];
+	var max = activeLetters[activeLetters.length-1];
+	for (i=start; i<max; i+=diff) {
+		if (game[i] == "") {
+			return false;
+		}
+	}
+	return true;
+}
+
+// check rules + calculate points if valid move
+function calculatePoints() {
+	if (!letterPositionValid()) {
+		return false;
+	}
+	
+	var t = findWordsByActiveLetters();
+	var words = t[0];
+	var points = t[1];
+	
+	if (words.length < 1) {
+		return false;
+	}
+	for (i=0; i<words.length; i++) {
+		if (!isValidWord(words[i])) {
+			console.log(words[i]);
+			return false;
+		}
+	}
+	return points;
+}
+
+// finish move
+function checkLetters() {
+	var points = calculatePoints();
+	
+	if (!points) {
+		return;
+	}
+	player_1_points += points;
+	activeLetters.length=0;
+	drawTiles();
+	printLetters();
+	printBoard();
+	
+	document.getElementById("move").innerHTML = "play it";
+	document.getElementById("move").disabled  = true;
+	return true;
+}
+
+// pass turn to exchange some tiles
+function pass() {
+	//todo: implement
+}
+
+function startGame() {
+	// event handlers on board
+	board = document.getElementById("board");
+	for (i=0; i<15; i++) {
+		for (j=0; j<15; j++) {
+			game[i * 15 + j]='';
+			board.rows[i].cells[j].onclick=setLetter;
+		}
+	}
+
+	document.getElementById("move").disabled = true;
+
+	drawTiles();
+	printLetters();
+	printBoard();
+}
+</script>
+<style>
+table, th, td
+{
+	border: 1px solid black;
+	min-width: 35px;
+	height: 35px;
+	text-align: center;
+}
+</style>
+</head>
+<body onload="startGame()">
+<table id="board">
+<tr><td id="s1_1"><td id="s1_2"><td id="s1_3"><td id="s1_4"><td id="s1_5"><td id="s1_6"><td id="s1_7"><td id="s1_8"><td id="s1_9"><td id="s1_10"><td id="s1_11"><td id="s1_12"><td id="s1_13"><td id="s1_14"><td id="s1_15"></tr>
+<tr><td id="s2_1"><td id="s2_2"><td id="s2_3"><td id="s2_4"><td id="s2_5"><td id="s2_6"><td id="s2_7"><td id="s2_8"><td id="s2_9"><td id="s2_10"><td id="s2_11"><td id="s2_12"><td id="s2_13"><td id="s2_14"><td id="s2_15"></tr>
+<tr><td id="s3_1"><td id="s3_2"><td id="s3_3"><td id="s3_4"><td id="s3_5"><td id="s3_6"><td id="s3_7"><td id="s3_8"><td id="s3_9"><td id="s3_10"><td id="s3_11"><td id="s3_12"><td id="s3_13"><td id="s3_14"><td id="s3_15"></tr>
+<tr><td id="s4_1"><td id="s4_2"><td id="s4_3"><td id="s4_4"><td id="s4_5"><td id="s4_6"><td id="s4_7"><td id="s4_8"><td id="s4_9"><td id="s4_10"><td id="s4_11"><td id="s4_12"><td id="s4_13"><td id="s4_14"><td id="s4_15"></tr>
+<tr><td id="s5_1"><td id="s5_2"><td id="s5_3"><td id="s5_4"><td id="s5_5"><td id="s5_6"><td id="s5_7"><td id="s5_8"><td id="s5_9"><td id="s5_10"><td id="s5_11"><td id="s5_12"><td id="s5_13"><td id="s5_14"><td id="s5_15"></tr>
+<tr><td id="s6_1"><td id="s6_2"><td id="s6_3"><td id="s6_4"><td id="s6_5"><td id="s6_6"><td id="s6_7"><td id="s6_8"><td id="s6_9"><td id="s6_10"><td id="s6_11"><td id="s6_12"><td id="s6_13"><td id="s6_14"><td id="s6_15"></tr>
+<tr><td id="s7_1"><td id="s7_2"><td id="s7_3"><td id="s7_4"><td id="s7_5"><td id="s7_6"><td id="s7_7"><td id="s7_8"><td id="s7_9"><td id="s7_10"><td id="s7_11"><td id="s7_12"><td id="s7_13"><td id="s7_14"><td id="s7_15"></tr>
+<tr><td id="s8_1"><td id="s8_2"><td id="s8_3"><td id="s8_4"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12"><td id="s8_13"><td id="s8_14"><td id="s8_15"></tr>
+<tr><td id="s9_1"><td id="s9_2"><td id="s9_3"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7"><td id="s9_8"><td id="s9_9"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13"><td id="s9_14"><td id="s9_15"></tr>
+<tr><td id="s10_1"><td id="s10_2"><td id="s10_3"><td id="s10_4"><td id="s10_5"><td id="s10_6"><td id="s10_7"><td id="s10_8"><td id="s10_9"><td id="s10_10"><td id="s10_11"><td id="s10_12"><td id="s10_13"><td id="s10_14"><td id="s10_15"></tr>
+<tr><td id="s11_1"><td id="s11_2"><td id="s11_3"><td id="s11_4"><td id="s11_5"><td id="s11_6"><td id="s11_7"><td id="s11_8"><td id="s11_9"><td id="s11_10"><td id="s11_11"><td id="s11_12"><td id="s11_13"><td id="s11_14"><td id="s11_15"></tr>
+<tr><td id="s12_1"><td id="s12_2"><td id="s12_3"><td id="s12_4"><td id="s12_5"><td id="s12_6"><td id="s12_7"><td id="s12_8"><td id="s12_9"><td id="s12_10"><td id="s12_11"><td id="s12_12"><td id="s12_13"><td id="s12_14"><td id="s12_15"></tr>
+<tr><td id="s13_1"><td id="s13_2"><td id="s13_3"><td id="s13_4"><td id="s13_5"><td id="s13_6"><td id="s13_7"><td id="s13_8"><td id="s13_9"><td id="s13_10"><td id="s13_11"><td id="s13_12"><td id="s13_13"><td id="s13_14"><td id="s13_15"></tr>
+<tr><td id="s14_1"><td id="s14_2"><td id="s14_3"><td id="s14_4"><td id="s14_5"><td id="s14_6"><td id="s14_7"><td id="s14_8"><td id="s14_9"><td id="s14_10"><td id="s14_11"><td id="s14_12"><td id="s14_13"><td id="s14_14"><td id="s14_15"></tr>
+<tr><td id="s15_1"><td id="s15_2"><td id="s15_3"><td id="s15_4"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12"><td id="s15_13"><td id="s15_14"><td id="s15_15"></tr>
+</table>
+
+Your letters: <div id="player_1_letters"></div>
+<button onclick="resetCurrentTiles()">recall</button>
+<button onclick="checkLetters()" id="move">play it</button>
+<button onclick="pass()">pass</button>
