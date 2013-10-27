@@ -1,11 +1,11 @@
-<html>
+ï»¿<html>
 <head>
 <script>
 /**
  * global state vars
  */
-var game = new Array();
-var activeLetters = new Array();
+var game = [];
+var activeLetters = [];
 var letters = [
 				'A','A','A','A','A','A','A','A','A',
 				'B','B',
@@ -33,9 +33,9 @@ var letters = [
 				'X',
 				'Y','Y',
 				'Z',
-				'Ä',
-				'Ö',
-				'Ü',
+				'Ã„',
+				'Ã–',
+				'Ãœ',
 				];
 var pointsPerLetter = {
 				'A':1,
@@ -64,20 +64,20 @@ var pointsPerLetter = {
 				'X':8,
 				'Y':10,
 				'Z':3,
-				'Ä':6,
-				'Ö':8,
-				'Ü':6
+				'Ã„':6,
+				'Ã–':8,
+				'Ãœ':6
 				};
 				
-var player_1_letters = new Array();
+var player_1_letters = [];
 var player_1_points  = 0;
 
-var player_2_letters = new Array();
+var player_2_letters = [];
 var player_2_points  = 0;
 
 var allText =[];
-txtFile = new XMLHttpRequest();
-txtFile.open("GET", "file:///C:/Users/razor/Desktop/scrabble/deutsch.txt", true);
+var txtFile = new XMLHttpRequest();
+txtFile.open("GET", "file:///C:/Users/razor/Documents/GitHub/scrabble/deutsch.txt", true);
 txtFile.onreadystatechange = function()
 {
 	if (txtFile.readyState === 4) {
@@ -89,13 +89,13 @@ txtFile.send(null);
 function setLetter(elem) {
 
 	// get current field
-	targetPosition = elem.srcElement.id.substring(1,elem.srcElement.id.length).split("_");
-	x = parseInt(targetPosition[0]) - 1;
-	y = parseInt(targetPosition[1]) - 1;
+	var targetPosition = elem.srcElement.id.substring(1,elem.srcElement.id.length).split("_");
+	var x = parseInt(targetPosition[0]) - 1;
+	var y = parseInt(targetPosition[1]) - 1;
 
 	// if there is already a active tile, remove it.
 	if (elem.target.bgColor == "Yellow") {
-		letter = game[x*15+y];
+		var letter = game[x*15+y];
 		game[x*15+y] = "";
 		activeLetters.splice(activeLetters.indexOf(letter,1));
 		player_1_letters.push(letter);
@@ -106,7 +106,7 @@ function setLetter(elem) {
 	}
 	
 	// set the letter
-	var letter = window.prompt("Welchen Buchstaben möchtest du hier setzen?","").toUpperCase();
+	var letter = window.prompt("Welchen Buchstaben mÃ¶chtest du hier setzen?","").toUpperCase();
 	var letter_position = player_1_letters.indexOf(letter);
 	if (letter_position == -1) {
 		alert("Den Buchstaben hast du nicht auf der Hand!");
@@ -139,13 +139,13 @@ function drawTiles() {
 
 // refresh letter board of player
 function printLetters() {
-	document.getElementById("player_1_letters").innerHTML =player_1_letters.join();
+	document.getElementById("player_1_letters").innerHTML = player_1_letters.join();
 }
 
 // refresh game board
 function printBoard() {
-	for (i=0; i<15; i++) {
-		for (j=0; j<15; j++) {
+	for (var i=0; i<15; i++) {
+		for (var j=0; j<15; j++) {
 			board.rows[i].cells[j].innerHTML=game[i * 15 + j];
 			if (activeLetters.indexOf(i * 15 + j) != -1) {
 				board.rows[i].cells[j].bgColor = "Yellow";
@@ -158,8 +158,8 @@ function printBoard() {
 
 // take all current tiles back
 function resetCurrentTiles() {
-	for (i=0; i<activeLetters.length; i++) {
-		pos = activeLetters[i];
+	for (var i=0; i<activeLetters.length; i++) {
+		var pos = activeLetters[i];
 		player_1_letters.push(game[pos]);
 		game[pos] = '';
 	}
@@ -178,22 +178,22 @@ function isValidWord(word) {
 
 // find all affected words + calculate points
 function findWordsByActiveLetters() {
-	words = new Array();
-	pointSum = 0;
-	for (i=0; i < activeLetters.length; i++) {
-		cur = activeLetters[i];
+	var words = [];
+	var pointSum = 0;
+	for (var i=0; i < activeLetters.length; i++) {
+		var cur = activeLetters[i];
 		/*
 		 * horizontal words
 		 */
 		// find leftest letter
-		h=cur;
+		var h=cur;
 		while (game[h-1] != "" && (h % 15) > 0) {
 			h -=1;
 		}
 		//construct word
-		word = '';
-		points = 0;
-		multiplier = 1;
+		var word = '';
+		var points = 0;
+		var multiplier = 1;
 		while (game[h] != "" && (h % 15) != 14) {
 			word = word.concat(game[h]);
 			points += pointsPerLetter[game[h]];
@@ -208,7 +208,7 @@ function findWordsByActiveLetters() {
 		 * vertical words
 		 */
 		// find highest letter
-		v=cur;
+		var v=cur;
 		while (game[v-15] != "" && v > 14) {
 			v -= 15;
 		}
@@ -235,7 +235,7 @@ function letterPositionValid() {
 	var start = activeLetters[0];
 	var diff = activeLetters[1] - activeLetters[0];
 	var max = activeLetters[activeLetters.length-1];
-	for (i=start; i<max; i+=diff) {
+	for (var i=start; i<max; i+=diff) {
 		if (game[i] == "") {
 			return false;
 		}
@@ -268,10 +268,10 @@ function calculatePoints() {
 // finish move
 function checkLetters() {
 	var points = calculatePoints();
-	
 	if (!points) {
 		return;
 	}
+	
 	player_1_points += points;
 	activeLetters.length=0;
 	drawTiles();
@@ -280,6 +280,8 @@ function checkLetters() {
 	
 	document.getElementById("move").innerHTML = "play it";
 	document.getElementById("move").disabled  = true;
+	
+	computerMove();
 	return true;
 }
 
@@ -288,11 +290,17 @@ function pass() {
 	//todo: implement
 }
 
+//fancy ki comes here
+function computerMove() {
+	//todo: implement
+}
+
 function startGame() {
-	// event handlers on board
+	//board is global form now on.
 	board = document.getElementById("board");
-	for (i=0; i<15; i++) {
-		for (j=0; j<15; j++) {
+	// event handlers on board
+	for (var i=0; i<15; i++) {
+		for (var j=0; j<15; j++) {
 			game[i * 15 + j]='';
 			board.rows[i].cells[j].onclick=setLetter;
 		}
@@ -338,3 +346,5 @@ Your letters: <div id="player_1_letters"></div>
 <button onclick="resetCurrentTiles()">recall</button>
 <button onclick="checkLetters()" id="move">play it</button>
 <button onclick="pass()">pass</button>
+</body>
+</html>
