@@ -7,67 +7,67 @@
 var game = [];
 var activeLetters = [];
 var letters = [
-				'A','A','A','A','A','A','A','A','A',
-				'B','B',
-				'C','C',
-				'D','D','D','D',
-				'E','E','E','E','E','E','E','E','E','E','E','E',
-				'F','F',
-				'G','G','G',
-				'H','H',
-				'I','I','I','I','I','I','I','I','I',
-				'J',
-				'K',
-				'L','L','L','L',
-				'M','M',
-				'N','N','N','N','N','N',
-				'O','O','O','O','O','O','O','O',
-				'P','P',
-				'Q',
-				'R','R','R','R','R','R',
-				'S','S','S','S',
-				'T','T','T','T','T','T',
-				'U','U','U','U',
-				'V','V',
-				'W','W',
-				'X',
-				'Y','Y',
-				'Z',
-				'Ä',
-				'Ö',
-				'Ü',
-				];
+	'A','A','A','A','A','A','A','A','A',
+	'B','B',
+	'C','C',
+	'D','D','D','D',
+	'E','E','E','E','E','E','E','E','E','E','E','E',
+	'F','F',
+	'G','G','G',
+	'H','H',
+	'I','I','I','I','I','I','I','I','I',
+	'J',
+	'K',
+	'L','L','L','L',
+	'M','M',
+	'N','N','N','N','N','N',
+	'O','O','O','O','O','O','O','O',
+	'P','P',
+	'Q',
+	'R','R','R','R','R','R',
+	'S','S','S','S',
+	'T','T','T','T','T','T',
+	'U','U','U','U',
+	'V','V',
+	'W','W',
+	'X',
+	'Y','Y',
+	'Z',
+	'Ä',
+	'Ö',
+	'Ü',
+];
 var pointsPerLetter = {
-				'A':1,
-				'B':3,
-				'C':4,
-				'D':1,
-				'E':1,
-				'F':4,
-				'G':2,
-				'H':2,
-				'I':1,
-				'J':6,
-				'K':4,
-				'L':2,
-				'M':3,
-				'N':1,
-				'O':2,
-				'P':4,
-				'Q':10,
-				'R':1,
-				'S':1,
-				'T':1,
-				'U':1,
-				'V':6,
-				'W':3,
-				'X':8,
-				'Y':10,
-				'Z':3,
-				'Ä':6,
-				'Ö':8,
-				'Ü':6
-				};
+	'A':1,
+	'B':3,
+	'C':4,
+	'D':1,
+	'E':1,
+	'F':4,
+	'G':2,
+	'H':2,
+	'I':1,
+	'J':6,
+	'K':4,
+	'L':2,
+	'M':3,
+	'N':1,
+	'O':2,
+	'P':4,
+	'Q':10,
+	'R':1,
+	'S':1,
+	'T':1,
+	'U':1,
+	'V':6,
+	'W':3,
+	'X':8,
+	'Y':10,
+	'Z':3,
+	'Ä':6,
+	'Ö':8,
+	'Ü':6
+};
 				
 var player_1_letters = [];
 var player_1_points  = 0;
@@ -75,6 +75,7 @@ var player_1_points  = 0;
 var player_2_letters = [];
 var player_2_points  = 0;
 
+//le dictionary is loaded
 var allText =[];
 var txtFile = new XMLHttpRequest();
 txtFile.open("GET", "file:///C:/Users/razor/Documents/GitHub/scrabble/deutsch.txt", true);
@@ -87,7 +88,6 @@ txtFile.onreadystatechange = function()
 txtFile.send(null);
 
 function setLetter(elem) {
-
 	// get current field
 	var targetPosition = elem.srcElement.id.substring(1,elem.srcElement.id.length).split("_");
 	var x = parseInt(targetPosition[0]) - 1;
@@ -129,10 +129,10 @@ function setLetter(elem) {
 }
 
 // get new random tiles to fill stack
-function drawTiles() {
-	while (player_1_letters.length < 7 && letters.length > 0) {
+function drawTiles(player_var) {
+	while (player_var.length < 7 && letters.length > 0) {
 		var i = Math.floor(Math.random() * letters.length);
-		player_1_letters.push(letters[i]);
+		player_var.push(letters[i]);
 		letters.splice(i,1);
 	}
 }
@@ -274,7 +274,7 @@ function checkLetters() {
 	
 	player_1_points += points;
 	activeLetters.length=0;
-	drawTiles();
+	drawTiles(player_1_letters);
 	printLetters();
 	printBoard();
 	
@@ -290,9 +290,127 @@ function pass() {
 	//todo: implement
 }
 
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item);
+};
+
+function getWordsFromLetterSalad(letters, currentWord, words) {
+	// try all the combinations and recurse with the remaining letters
+	var l = letters.length;
+	for (var i=0; i<l; i++) {
+		var tempWord = currentWord + letters[i];
+		
+		// there is no word which starts with this combination
+		if (allText.indexOf("\n" + tempWord) == -1) {
+			continue;
+		}
+		
+		// we already had this
+		if (words.indexOf(tempWord) != -1) {
+			continue;
+		}
+		
+		words.push(tempWord);
+		
+		var t = letters.splice(i,1)[0];
+		getWordsFromLetterSalad(letters, tempWord, words);
+		letters.insert(i,t);
+	}
+	return words.sort();
+}
+
 //fancy ki comes here
 function computerMove() {
-	//todo: implement
+	drawTiles(player_2_letters);
+	var word_best = '';
+	var word_start = -1;
+	var word_orientation_vertical = false;
+	var points_best = 0;
+	
+	/*
+	 * find words and then
+	 * check if it fits anywhere.
+	 * check if the points are thetter than old option
+	 * use best option
+	 */
+	 
+	// find words from computers tiles
+	var possibleWords = getWordsFromLetterSalad(player_2_letters, '', []);
+	var validWords = [];
+	for (var i=0; i<possibleWords.length; i++) {
+		if (isValidWord(possibleWords[i])) {
+			validWords.push(possibleWords[i]);
+		}
+	}
+	
+	// find options to add words in the game
+	for (var i=0; i<game.length; i++) {
+		if (game[i] == '') {
+			continue;
+		}
+		
+		var verticalMin=1;
+		while (game[i - verticalMin*15] == "" && i - verticalMin * 15 > 14) {
+			verticalMin++;
+		}
+		var verticalMax=1;
+		while (game[i + verticalMax*15] == "" && i + verticalMax*15 < 255-15) {
+			verticalMax++;
+		}
+		var horizontalMin=1;
+		while (game[i - horizontalMin] == "" && (i - horizontalMin)%15 >0) {
+			horizontalMin++;
+		}
+		var horizontalMax=1;
+		while (game[i + horizontalMax] == "" && (i + horizontalMax)%15 < 14) {
+			horizontalMax++;
+		}
+		
+		// primitive ki: find a vertical word starting with an existing letter
+		// choose the longest word.
+		if (i < 15 || game[i - 15] == "") {
+			if (verticalMax > 6) {
+				var possibleWords = getWordsFromLetterSalad(player_2_letters, game[i], []);
+				var validWords = [];
+				for (var j=0; j<possibleWords.length; j++) {
+					if (isValidWord(possibleWords[j])) {
+						validWords.push(possibleWords[j]);
+					}
+				}
+				if (validWords.length > 0) {
+					word_best = validWords.sort(function (a, b) { return b.length - a.length; })[0];
+					word_start = i;
+					word_orientation_vertical = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	console.log(player_2_letters);
+	console.log(word_orientation_vertical);
+	console.log(word_best);
+	console.log(word_start);
+	
+	if (word_best != '' && word_start > -1) {
+		if (word_orientation_vertical) {
+			var pos = word_start;
+			for (var i=0; i < word_best.length; i++) {
+				if (game[pos] == '') {
+					var letter_pos = player_2_letters.indexOf(word_best[i]);
+					if (letter_pos == -1) {
+						console.log('try to use letter ' + word_best[i] + ' but not on hand!');
+						return;
+					}
+					player_2_letters.splice(letter_pos,1);
+					game[pos] = word_best[i];
+				}
+				pos += 15;
+			}
+		}
+	}
+	
+	printBoard();
 }
 
 function startGame() {
@@ -308,7 +426,7 @@ function startGame() {
 
 	document.getElementById("move").disabled = true;
 
-	drawTiles();
+	drawTiles(player_1_letters);
 	printLetters();
 	printBoard();
 }
