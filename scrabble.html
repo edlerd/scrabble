@@ -27,10 +27,18 @@
 
 .hand_letter {
 	display: inline-block;
-	width: 21px;
-	text-align: center;
+	width: 20px;
+	text-align: left;
 	border: 1px dotted;
-	margin: 5px;
+	margin: 15px;
+	height: 25px;
+	padding-top: 4px;
+	padding-left: 6px;
+}
+.hand_letter_points {
+	display: inline;
+	margin-left: -25px;
+	font-size: 8pt;
 }
 
 .player_name {
@@ -142,7 +150,7 @@ txtFile.open("GET", "file:///C:/Users/razor/Documents/GitHub/scrabble/deutsch.tx
 txtFile.onreadystatechange = function()
 {
 	if (txtFile.readyState === 4) {
-		allText = txtFile.responseText.toUpperCase();
+		allText = txtFile.responseText.replace("oe","ö").replace("ue",'ü').replace('ae','ä').toUpperCase();
 	}
 };
 txtFile.send(null);
@@ -233,7 +241,11 @@ function drawTiles(player_var) {
 
 // refresh letter board of player
 function printLetters() {
-	document.getElementById("player_1_letters").innerHTML = '<div class="hand_letter">' + player_1_letters.join('</div><div class="hand_letter">') + '</div>';
+	var out = "";
+	for (var i=0; i<player_1_letters.length; i++) {
+		out += '<div class="hand_letter">' + player_1_letters[i] + '</div><div class="hand_letter_points">' + pointsPerLetter[player_1_letters[i]] + '</div>';
+	}
+	document.getElementById("player_1_letters").innerHTML = out;
 }
 
 // refresh game board
