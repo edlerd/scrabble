@@ -1,6 +1,62 @@
 ﻿<html>
 <head>
+<style>
+.input_letter {
+	display: inline-block;
+	margin: 5px;
+	border: 1px solid orange;
+	background-color: white;
+	color: initial;
+	width: 18px;
+	height: 18px;
+	text-align: center;
+}
+
+#input_container {
+	display: none;
+	border: 1px solid;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: black;
+	color: white;
+	opacity: 0.7;
+}
+
+.hand_letter {
+	display: inline-block;
+	width: 21px;
+	text-align: center;
+	border: 1px dotted;
+	margin: 5px;
+}
+
+.player_name {
+	display: inline-block;
+	margin-left: 5px;
+}
+</style>
 <script>
+/**
+
+   Copyright 2014 David Edler
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ 
+ **/
+ 
 /**
  * global state vars
  */
@@ -75,6 +131,10 @@ var player_1_points  = 0;
 var player_2_letters = [];
 var player_2_points  = 0;
 
+var ki_intelligence = 1;
+
+var max_points = 0;
+
 //le dictionary is loaded
 var allText =[];
 var txtFile = new XMLHttpRequest();
@@ -87,7 +147,7 @@ txtFile.onreadystatechange = function()
 };
 txtFile.send(null);
 
-function setLetter(elem) {
+function showLetterInput(elem) {
 	// get current field
 	var targetPosition = elem.srcElement.id.substring(1,elem.srcElement.id.length).split("_");
 	var x = parseInt(targetPosition[0]) - 1;
@@ -105,13 +165,47 @@ function setLetter(elem) {
 		return;
 	}
 	
-	// set the letter
-	var letter = window.prompt("Welchen Buchstaben möchtest du hier setzen?","").toUpperCase();
+	// mark target cell
+	elem.srcElement.bgColor="orange";
+	elem.srcElement.classList.add("input_here");
+	
+	// show the input layer
+	var input_container = document.getElementById("input_container");
+	input_container.style.padding= (elem.srcElement.offsetTop + 10) + " 0 0 " + (elem.srcElement.offsetLeft + 55);
+	input_container.style.display= "block";
+	input_container.innerHTML = "Welchen Buchstaben möchtest du hier setzen?<br><div class='input_letter'>" + player_1_letters.join("</div><div class='input_letter'>") + "</div>";
+	
+	// append event listeners to input buttons
+	var buttons=document.getElementsByClassName("input_letter");
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].onclick = letterClicked;
+	}
+}
+
+function letterClicked(elem) {
+
+	// hide input layer
+	document.getElementById("input_container").style.display="none";
+	
+	// get target field
+	var targetRect = document.getElementsByClassName("input_here")[0];
+	targetRect.classList.remove("input_here");
+	
+	// get clicked letter
+	var letter = elem.srcElement.innerHTML;
+	
+	// get target position
+	var targetPosition = targetRect.id.substring(1,targetRect.id.length).split("_");
+	var x = parseInt(targetPosition[0]) - 1;
+	var y = parseInt(targetPosition[1]) - 1;
+	
 	var letter_position = player_1_letters.indexOf(letter);
 	if (letter_position == -1) {
 		alert("Den Buchstaben hast du nicht auf der Hand!");
 		return;
 	}
+	
+	// set the letter
 	game[x*15 + y] = letter;
 	player_1_letters.splice(letter_position,1);
 	activeLetters.push(x*15 + y);
@@ -139,7 +233,7 @@ function drawTiles(player_var) {
 
 // refresh letter board of player
 function printLetters() {
-	document.getElementById("player_1_letters").innerHTML = player_1_letters.join();
+	document.getElementById("player_1_letters").innerHTML = '<div class="hand_letter">' + player_1_letters.join('</div><div class="hand_letter">') + '</div>';
 }
 
 // refresh game board
@@ -154,6 +248,10 @@ function printBoard() {
 			}
 		}
 	}
+	
+	//score
+	document.getElementById("player_1_points").innerHTML = player_1_points;
+	document.getElementById("player_2_points").innerHTML = player_2_points;
 }
 
 // take all current tiles back
@@ -170,7 +268,10 @@ function resetCurrentTiles() {
 
 // dictionary lookup
 function isValidWord(word) {
-	if (allText.indexOf("\n" + word + "\n") != -1) {
+	if (Math.random() > ki_intelligence) {
+		return false;
+	}
+	if (allText.match("\n" + word + "\n") != null) {
 		return true;
 	}
 	return false;
@@ -191,10 +292,11 @@ function findWordsByActiveLetters() {
 			h -=1;
 		}
 		//construct word
-		var word = '';
-		var points = 0;
 		var multiplier = 1;
-		while (game[h] != "" && (h % 15) != 14) {
+		var word = game[h];
+		var points = pointsPerLetter[game[h]];
+		h++;
+		while (game[h] != "" && (h % 15) != 0) {
 			word = word.concat(game[h]);
 			points += pointsPerLetter[game[h]];
 			h+=1;
@@ -216,7 +318,7 @@ function findWordsByActiveLetters() {
 		word = '';
 		points = 0;
 		multiplier = 1;
-		while (game[v] != "" && v < 255) {
+		while (game[v] != "" && v < 225) {
 			word = word.concat(game[v]);
 			points += pointsPerLetter[game[v]];
 			v += 15;
@@ -230,11 +332,20 @@ function findWordsByActiveLetters() {
 }
 
 // is the current position of new letters valid?
+// so there is only one word set and not letters on
+// random points of the board
 function letterPositionValid() {
-	activeLetters.sort();
-	var start = activeLetters[0];
-	var diff = activeLetters[1] - activeLetters[0];
-	var max = activeLetters[activeLetters.length-1];
+	var start = 225;
+	var max = 0;
+	for (var i=0; i < activeLetters.length; i++) {
+		if (activeLetters[i] < start) {
+			start = activeLetters[i];
+		}
+		if (activeLetters[i] < max) {
+			max = activeLetters[i];
+		}
+	}
+	var diff = (max - start) / activeLetters.length;
 	for (var i=start; i<max; i+=diff) {
 		if (game[i] == "") {
 			return false;
@@ -258,7 +369,6 @@ function calculatePoints() {
 	}
 	for (i=0; i<words.length; i++) {
 		if (!isValidWord(words[i])) {
-			console.log(words[i]);
 			return false;
 		}
 	}
@@ -281,18 +391,103 @@ function checkLetters() {
 	document.getElementById("move").innerHTML = "play it";
 	document.getElementById("move").disabled  = true;
 	
+	//todo: make this with a timeout so the button is not blocked
+	//      and players tiles are viewed immediately
+	// ki_intelligence: the closer to 1 the more clever the ki
+	ki_intelligence = 0.2;
 	computerMove();
+	ki_intelligence = 1;
 	return true;
+}
+
+function hand_letter_clicked(elem) {
+	var letter = elem.srcElement.innerHTML;
+	if (elem.srcElement.style.background != 'yellow') {
+		elem.srcElement.style.background = 'yellow';
+		elem.srcElement.classList.add('selected_to_switch');
+	} else {
+		elem.srcElement.style.background = '';
+		elem.srcElement.classList.remove('selected_to_switch');
+	}
+}
+
+function pass_perform() {
+	var letters=document.getElementsByClassName('selected_to_switch');
+	for (i=0; i<letters.length; i++) {
+		var letter = letters[i].innerHTML;
+		var letter_position = player_1_letters.indexOf(letter);
+		player_1_letters.splice(letter_position,1);
+	}
+	
+	drawTiles(player_1_letters);
+	printLetters();
+	
+	var button = document.getElementById('pass');
+	button.innerHTML = 'pass';
+	button.onclick = pass;
+	computerMove();
 }
 
 // pass turn to exchange some tiles
 function pass() {
-	//todo: implement
+	var buttons=document.getElementsByClassName('hand_letter');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].onclick = hand_letter_clicked;
+	}
+	
+	var button = document.getElementById('pass');
+	button.innerHTML = 'select the letter to switch and click here when finished';
+	button.onclick = pass_perform;
 }
 
 Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item);
 };
+
+/**
+ * pos: free positions in game array
+ * letters: available letters
+ * result: used letters and their indexes
+ */
+function tryFreePositions(pos,letters,result) {
+
+	var tryPos = pos.pop();
+	activeLetters.push(tryPos);
+	
+	// try all letters
+	for (var k=0; k<letters.length; k++) {
+		var tempLetter = letters.splice(k,1)[0];
+		game[tryPos] = tempLetter;
+		result[tryPos] = tempLetter;
+		if (pos.length > 0) {
+			tryFreePositions(pos, letters,result);
+		} else {
+			var points = calculatePoints();
+			
+			// store points
+			// store position and letters in result
+			if (points > max_points) {
+				max_points = points;
+				//todo: ugly copy by value implementation should be rewritten
+				max_result = {};
+				for (var j=0; j<225; j++) {
+					if (result[j] != undefined) {
+						max_result[j] = result[j];
+					}
+				}
+				console.log('found it');
+				console.log(points);
+				console.log(result);
+			}
+		}
+		game[tryPos] = '';
+		result[tryPos] = '';
+		letters.insert(k,tempLetter);
+	}
+	
+	pos.push(tryPos);
+	activeLetters.splice(activeLetters.indexOf(tryPos,1));
+}
 
 function getWordsFromLetterSalad(letters, currentWord, words) {
 	// try all the combinations and recurse with the remaining letters
@@ -322,105 +517,129 @@ function getWordsFromLetterSalad(letters, currentWord, words) {
 //fancy ki comes here
 function computerMove() {
 	drawTiles(player_2_letters);
-	var word_best = '';
-	var word_start = -1;
-	var word_orientation_vertical = false;
-	var points_best = 0;
 	
-	/*
-	 * find words and then
-	 * check if it fits anywhere.
-	 * check if the points are thetter than old option
-	 * use best option
-	 */
-	 
-	// find words from computers tiles
-	var possibleWords = getWordsFromLetterSalad(player_2_letters, '', []);
-	var validWords = [];
-	for (var i=0; i<possibleWords.length; i++) {
-		if (isValidWord(possibleWords[i])) {
-			validWords.push(possibleWords[i]);
-		}
-	}
+	max_points = 0;
+	max_result = {};
 	
-	// find options to add words in the game
-	for (var i=0; i<game.length; i++) {
-		if (game[i] == '') {
-			continue;
-		}
-		
-		var verticalMin=1;
-		while (game[i - verticalMin*15] == "" && i - verticalMin * 15 > 14) {
-			verticalMin++;
-		}
-		var verticalMax=1;
-		while (game[i + verticalMax*15] == "" && i + verticalMax*15 < 255-15) {
-			verticalMax++;
-		}
-		var horizontalMin=1;
-		while (game[i - horizontalMin] == "" && (i - horizontalMin)%15 >0) {
-			horizontalMin++;
-		}
-		var horizontalMax=1;
-		while (game[i + horizontalMax] == "" && (i + horizontalMax)%15 < 14) {
-			horizontalMax++;
-		}
-		
-		// primitive ki: find a vertical word starting with an existing letter
-		// choose the longest word.
-		if (i < 15 || game[i - 15] == "") {
-			if (verticalMax > 6) {
-				var possibleWords = getWordsFromLetterSalad(player_2_letters, game[i], []);
-				var validWords = [];
-				for (var j=0; j<possibleWords.length; j++) {
-					if (isValidWord(possibleWords[j])) {
-						validWords.push(possibleWords[j]);
-					}
-				}
-				if (validWords.length > 0) {
-					word_best = validWords.sort(function (a, b) { return b.length - a.length; })[0];
-					word_start = i;
-					word_orientation_vertical = true;
-					break;
-				}
+	for (var step=0; step<15; step++) {
+
+		// try all rows
+		var row = step;
+		// the starting position inside the row
+		for (var rowStart=0; rowStart < 14; rowStart++) {
+			var startPos = row*15 + rowStart;
+
+			// the field left of our current word is not empty
+			if (rowStart != 0 && game[rowStart-1] != '') {
+				continue;
 			}
-		}
+			
+			for (var wordLength=2; wordLength < 15 - rowStart; wordLength++) {
+				var endPos = row*15 + rowStart + wordLength;
+				
+				// the field right of our current word is not empty
+				if (endPos != 15 && game[endPos+1] != '') {
+					continue;
+				}
+				
+				var letters=[];
+				var free_positions=[];
+				var free_count=0;
+				var set_count=0;
+				for (var i=startPos; i < endPos; i++) {
+					if (game[i] == '') {
+						free_positions[free_count] = i;
+						free_count++;
+					} else {
+						set_count++;
+					}
+					letters[i - startPos] = game[i];
+				}
+				
+				// no letter set or
+				// no free space to set a letter or
+				// too many free spaces for 4 letters
+				if (set_count==0 || free_count==0 || free_count > 3) {
+					continue;
+				}
+				
+				best_try = tryFreePositions(free_positions, player_2_letters, {});
+			}
+		} // end rowStart
+		
+		
+		// try all columns
+		var column = step;
+		// the starting position inside the column
+		for (var columnStart=0; columnStart < 14; columnStart++) {
+			var startPos = column + 15*columnStart;
+
+			// the field on top of our current word is not empty
+			if (startPos > 14 && game[startPos-15] != '') {
+				continue;
+			}
+			
+			for (var wordLength=2; wordLength < 15 - columnStart; wordLength++) {
+				var endPos = startPos + ( 15 * wordLength );
+				
+				// the field under our current word is not empty
+				if (endPos + 15 < 225 && game[endPos+15] != '') {
+					continue;
+				}
+				
+				var letters=[];
+				var free_positions=[];
+				var free_count=0;
+				var set_count=0;
+				for (var i=startPos; i < endPos; i+=15) {
+					if (game[i] == '') {
+						free_positions[free_count] = i;
+						free_count++;
+					} else {
+						set_count++;
+					}
+					letters[i - startPos] = game[i];
+				}
+				
+				// no letter set or
+				// no free space to set a letter or
+				// too many free spaces for 4 letters
+				if (set_count==0 || free_count==0 || free_count > 3) {
+					continue;
+				}
+				
+				best_try = tryFreePositions(free_positions, player_2_letters, {});
+			}
+		} // end columnStart
+		
+		console.log('best offer:');
+		console.log(max_points);
+		console.log(max_result);
 	}
 	
+	player_2_points += max_points;
+	// todo: do the lookup more efficient
+	for (var i=0; i<225; i++) {
+		if (max_result[i] != undefined) {
+			var letter_pos = player_2_letters.indexOf(max_result[i]);
+			player_2_letters.splice(letter_pos,1);
+			game[i] = max_result[i];
+		}
+	}
+	activeLetters.length=0;
+
 	console.log(player_2_letters);
-	console.log(word_orientation_vertical);
-	console.log(word_best);
-	console.log(word_start);
-	
-	if (word_best != '' && word_start > -1) {
-		if (word_orientation_vertical) {
-			var pos = word_start;
-			for (var i=0; i < word_best.length; i++) {
-				if (game[pos] == '') {
-					var letter_pos = player_2_letters.indexOf(word_best[i]);
-					if (letter_pos == -1) {
-						console.log('try to use letter ' + word_best[i] + ' but not on hand!');
-						return;
-					}
-					player_2_letters.splice(letter_pos,1);
-					game[pos] = word_best[i];
-				}
-				pos += 15;
-			}
-		}
-	}
-	
 	printBoard();
 }
 
 function startGame() {
-	//board is global form now on.
+	//board is global from now on.
 	board = document.getElementById("board");
 	// event handlers on board
 	for (var i=0; i<15; i++) {
 		for (var j=0; j<15; j++) {
 			game[i * 15 + j]='';
-			board.rows[i].cells[j].onclick=setLetter;
+			board.rows[i].cells[j].onclick=showLetterInput;
 		}
 	}
 
@@ -460,9 +679,16 @@ table, th, td
 <tr><td id="s15_1"><td id="s15_2"><td id="s15_3"><td id="s15_4"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12"><td id="s15_13"><td id="s15_14"><td id="s15_15"></tr>
 </table>
 
-Your letters: <div id="player_1_letters"></div>
+Deine Buchstaben: <div id="player_1_letters"></div>
 <button onclick="resetCurrentTiles()">recall</button>
 <button onclick="checkLetters()" id="move">play it</button>
-<button onclick="pass()">pass</button>
+<button onclick="pass()" id="pass">pass</button>
+
+<div>
+<div class="player_name">Du: </div><div class="player_name" id="player_1_points">0</div><br>
+<div class="player_name">KI: </div><div class="player_name" id="player_2_points">0</div>
+</div>
+
+<div id="input_container"></div>
 </body>
 </html>
