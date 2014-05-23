@@ -1,67 +1,5 @@
 ﻿<html>
 <head>
-<style>
-.input_letter {
-	display: inline-block;
-	margin: 5px;
-	border: 1px solid orange;
-	background-color: white;
-	color: initial;
-	width: 18px;
-	height: 18px;
-	text-align: center;
-}
-
-#input_container {
-	display: none;
-	border: 1px solid;
-	height: 100%;
-	width: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	background-color: black;
-	color: white;
-	opacity: 0.7;
-}
-
-.hand_letter {
-	display: inline-block;
-	width: 20px;
-	text-align: left;
-	border: 1px dotted;
-	margin: 15px;
-	height: 25px;
-	padding-top: 4px;
-	padding-left: 6px;
-}
-.hand_letter_points {
-	display: inline;
-	margin-left: -25px;
-	font-size: 8pt;
-}
-
-.player_name {
-	display: inline-block;
-	margin-left: 5px;
-}
-
-.tw {
-	background-color:#E60000;
-}
-.dw {
-	background-color:#F86969;
-}
-.tl {
-	background-color:#3675FA;
-}
-.dl {
-	background-color:#22ACD8;
-}
-.start {
-	background-color:#ff5500;
-}
-</style>
 <script>
 /**
 
@@ -282,9 +220,12 @@ function printBoard() {
 		}
 	}
 	
-	//score
+	// score
 	document.getElementById("player_1_points").innerHTML = player_1_points;
 	document.getElementById("player_2_points").innerHTML = player_2_points;
+	
+	// remaining tiles
+	document.getElementById("letters_left").innerHTML = letters.length;
 }
 
 // take all current tiles back
@@ -410,8 +351,9 @@ function findWordsByActiveLetters() {
 }
 
 // is the current position of new letters valid?
-// so there is only one word set and not letters on
-// random points of the board
+// one new word set and no letters on random points of the board
+// new word is connected to old letters
+// or opening of the game and center field used
 function letterPositionValid() {
 	var start = 225;
 	var max = 0;
@@ -429,7 +371,57 @@ function letterPositionValid() {
 			return false;
 		}
 	}
-	return true;
+	
+	// do the tiles connect to letters on the board?
+	var connects = false;
+	for (var i=0; i < activeLetters.length; i++) {
+		var left = activeLetters[i]-1;
+		if (left%15 < 14) {
+			if (activeLetters.indexOf(left) == -1 && game[left] != '') {
+				connects=true;
+			}
+		}
+		var right = activeLetters[i]+1;
+		if (right%15 > 0) {
+			if (activeLetters.indexOf(right) == -1 && game[right] != '') {
+				connects=true;
+			}
+		}
+		var top = activeLetters[i]-15;
+		if (top > 0) {
+			if (activeLetters.indexOf(top) == -1 && game[top] != '') {
+				connects=true;
+			}
+		}
+		var down = activeLetters[i]+15;
+		if (down < 225) {
+			if (activeLetters.indexOf(down) == -1 && game[down] != '') {
+				connects=true;
+			}
+		}
+	}
+	
+	// active tiles connect to existing tiles
+	if (connects) {
+		return true;
+	}
+	
+	// if they do not connect it could still be the start of the game
+	if (connects == false) {
+		var empty = true;
+		for (i=0; i<225; i++) {
+			if (game[i] != '' && activeLetters.indexOf(i) == -1) {
+				empty = false;
+				break;
+			}
+		}
+		
+		// we open the game and are using the center field
+		if (empty && activeLetters.indexOf(112) != -1) {
+			return true;
+		}
+	}
+	return false;
 }
 
 // check rules + calculate points if valid move
@@ -736,6 +728,73 @@ table, th, td
 	height: 35px;
 	text-align: center;
 }
+
+.input_letter {
+	display: inline-block;
+	margin: 5px;
+	border: 1px solid orange;
+	background-color: white;
+	color: initial;
+	width: 18px;
+	height: 18px;
+	text-align: center;
+}
+
+#input_container {
+	display: none;
+	border: 1px solid;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: black;
+	color: white;
+	opacity: 0.7;
+}
+
+.hand_letter {
+	display: inline-block;
+	width: 20px;
+	text-align: left;
+	border: 1px dotted;
+	margin: 15px;
+	height: 25px;
+	padding-top: 4px;
+	padding-left: 6px;
+}
+.hand_letter_points {
+	display: inline;
+	margin-left: -25px;
+	font-size: 8pt;
+}
+
+.letters_left {
+	display: inline-block;
+	margin-left: 102px;
+	width: 301px;
+}
+
+.player_name {
+	display: inline-block;
+	margin-left: 5px;
+}
+
+.tw {
+	background-color:#E60000;
+}
+.dw {
+	background-color:#F86969;
+}
+.tl {
+	background-color:#3675FA;
+}
+.dl {
+	background-color:#22ACD8;
+}
+.start {
+	background-color:#ff5500;
+}
 </style>
 </head>
 <body onload="startGame()">
@@ -747,8 +806,8 @@ table, th, td
 <tr><td id="s5_1"><td id="s5_2"><td id="s5_3"><td id="s5_4"><td id="s5_5" class="dw"><td id="s5_6"><td id="s5_7"><td id="s5_8"><td id="s5_9"><td id="s5_10"><td id="s5_11" class="dw"><td id="s5_12"><td id="s5_13"><td id="s5_14"><td id="s5_15"></tr>
 <tr><td id="s6_1"><td id="s6_2" class="tl"><td id="s6_3"><td id="s6_4"><td id="s6_5"><td id="s6_6" class="tl"><td id="s6_7"><td id="s6_8"><td id="s6_9"><td id="s6_10" class="tl"><td id="s6_11"><td id="s6_12"><td id="s6_13"><td id="s6_14" class="tl"><td id="s6_15"></tr>
 <tr><td id="s7_1"><td id="s7_2"><td id="s7_3" class="dl"><td id="s7_4"><td id="s7_5"><td id="s7_6"><td id="s7_7" class="dl"><td id="s7_8"><td id="s7_9" class="dl"><td id="s7_10"><td id="s7_11"><td id="s7_12"><td id="s7_13" class="dl"><td id="s7_14"><td id="s7_15"></tr>
-<tr><td id="s8_1" class="tw"><td id="s8_2"><td id="s8_3"><td id="s8_4" class="dl"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8" class="start dw"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12" class="dl"><td id="s8_13"><td id="s8_14"><td id="s8_15"></tr>
-<tr><td id="s9_1"><td id="s9_2"><td id="s9_3" class="dl"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7" class="dl"><td id="s9_8"><td id="s9_9" class="dl"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13" class="dl"><td id="s9_14"><td id="s9_15" class="tw"></tr>
+<tr><td id="s8_1" class="tw"><td id="s8_2"><td id="s8_3"><td id="s8_4" class="dl"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8" class="start dw"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12" class="dl"><td id="s8_13"><td id="s8_14"><td id="s8_15" class="tw"></tr>
+<tr><td id="s9_1"><td id="s9_2"><td id="s9_3" class="dl"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7" class="dl"><td id="s9_8"><td id="s9_9" class="dl"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13" class="dl"><td id="s9_14"><td id="s9_15"></tr>
 <tr><td id="s10_1"><td id="s10_2" class="tl"><td id="s10_3"><td id="s10_4"><td id="s10_5"><td id="s10_6" class="tl"><td id="s10_7"><td id="s10_8"><td id="s10_9"><td id="s10_10" class="tl"><td id="s10_11"><td id="s10_12"><td id="s10_13"><td id="s10_14" class="tl"><td id="s10_15"></tr>
 <tr><td id="s11_1"><td id="s11_2"><td id="s11_3"><td id="s11_4"><td id="s11_5" class="dw"><td id="s11_6"><td id="s11_7"><td id="s11_8"><td id="s11_9"><td id="s11_10"><td id="s11_11" class="dw"><td id="s11_12"><td id="s11_13"><td id="s11_14"><td id="s11_15"></tr>
 <tr><td id="s12_1" class="dl"><td id="s12_2"><td id="s12_3"><td id="s12_4" class="dw"><td id="s12_5"><td id="s12_6"><td id="s12_7"><td id="s12_8" class="dl"><td id="s12_9"><td id="s12_10"><td id="s12_11"><td id="s12_12" class="dw"><td id="s12_13"><td id="s12_14"><td id="s12_15" class="dl"></tr>
@@ -765,6 +824,7 @@ Deine Buchstaben: <div id="player_1_letters"></div>
 <div>
 <div class="player_name">Du: </div><div class="player_name" id="player_1_points">0</div><br>
 <div class="player_name">KI: </div><div class="player_name" id="player_2_points">0</div>
+<div class="letters_left">Buchstaben übrig: <span id="letters_left"></span></div>
 </div>
 
 <div id="input_container"></div>
