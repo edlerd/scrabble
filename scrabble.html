@@ -350,10 +350,13 @@ function findWordsByActiveLetters() {
 	return [words, pointSum];
 }
 
-// is the current position of new letters valid?
-// one new word set and no letters on random points of the board
-// new word is connected to old letters
-// or opening of the game and center field used
+/** 
+ * is the current position of new letters valid?
+ *
+ * one new word set and no letters on random points of the board
+ * new word is connected to old letters
+ * or opening of the game and center field used
+ **/
 function letterPositionValid() {
 	var start = 225;
 	var max = 0;
@@ -461,12 +464,16 @@ function checkLetters() {
 	document.getElementById("move").innerHTML = "play it";
 	document.getElementById("move").disabled  = true;
 	
-	//todo: make this with a timeout so the button is not blocked
-	//      and players tiles are viewed immediately
-	// ki_intelligence: the closer to 1 the more clever the ki
-	ki_intelligence = 0.2;
-	computerMove();
-	ki_intelligence = 1;
+	setTimeout(
+		function() {
+			// ki_intelligence: the closer to 1 the more clever the ki
+			ki_intelligence = 0.2;
+			computerMove();
+			ki_intelligence = 1;
+		},
+		10
+	);
+		
 	return true;
 }
 
@@ -538,13 +545,8 @@ function tryFreePositions(pos,letters,result) {
 			// store position and letters in result
 			if (points > max_points) {
 				max_points = points;
-				//todo: ugly copy by value implementation should be rewritten
-				max_result = {};
-				for (var j=0; j<225; j++) {
-					if (result[j] != undefined) {
-						max_result[j] = result[j];
-					}
-				}
+				//copy by value
+				max_result = JSON.parse(JSON.stringify(result));
 				console.log('found it');
 				console.log(points);
 				console.log(result);
@@ -688,14 +690,13 @@ function computerMove() {
 	}
 	
 	player_2_points += max_points;
-	// todo: do the lookup more efficient
-	for (var i=0; i<225; i++) {
-		if (max_result[i] != undefined) {
-			var letter_pos = player_2_letters.indexOf(max_result[i]);
-			player_2_letters.splice(letter_pos,1);
-			game[i] = max_result[i];
-		}
+	
+	for (var i in max_result) {
+		var letter_pos = player_2_letters.indexOf(max_result[i]);
+		player_2_letters.splice(letter_pos,1);
+		game[i] = max_result[i];
 	}
+	
 	activeLetters.length=0;
 
 	console.log(player_2_letters);
