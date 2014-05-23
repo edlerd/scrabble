@@ -45,6 +45,22 @@
 	display: inline-block;
 	margin-left: 5px;
 }
+
+.tw {
+	background-color:#E60000;
+}
+.dw {
+	background-color:#F86969;
+}
+.tl {
+	background-color:#3675FA;
+}
+.dl {
+	background-color:#22ACD8;
+}
+.start {
+	background-color:#ff5500;
+}
 </style>
 <script>
 /**
@@ -170,6 +186,11 @@ function showLetterInput(elem) {
 		elem.target.bgColor = "White";
 		printLetters();
 		printBoard();
+		return;
+	}
+	
+	// there is already a letter
+	if (elem.target.innerHTML != '') {
 		return;
 	}
 	
@@ -304,18 +325,48 @@ function findWordsByActiveLetters() {
 			h -=1;
 		}
 		//construct word
-		var multiplier = 1;
+		var word_multiplier = 1;
+		var letter_multiplier = 1;
 		var word = game[h];
-		var points = pointsPerLetter[game[h]];
+		if (activeLetters.indexOf(h) != -1) {
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("dl")) {
+					letter_multiplier = 2;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("tl")) {
+					letter_multiplier = 3;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("dw")) {
+					word_multiplier *= 2;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("tw")) {
+					word_multiplier *= 3;
+				}
+		}
+		var points = letter_multiplier * pointsPerLetter[game[h]];
 		h++;
 		while (game[h] != "" && (h % 15) != 0) {
+			letter_multiplier = 1;
+			if (activeLetters.indexOf(h) != -1) {
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("dl")) {
+					letter_multiplier = 2;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("tl")) {
+					letter_multiplier = 3;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("dw")) {
+					word_multiplier *= 2;
+				}
+				if (document.getElementById("s"+ Math.floor(h/15+1) + "_" + Math.floor(h%15+1)).classList.contains("tw")) {
+					word_multiplier *= 3;
+				}
+			}
 			word = word.concat(game[h]);
-			points += pointsPerLetter[game[h]];
+			points += letter_multiplier * pointsPerLetter[game[h]];
 			h+=1;
 		}
 		if (word.length > 1 && words.indexOf(word) == -1) {
 			words.push(word);
-			pointSum += points * multiplier;
+			pointSum += points * word_multiplier;
 		}
 		
 		/*
@@ -329,15 +380,30 @@ function findWordsByActiveLetters() {
 		//construct word
 		word = '';
 		points = 0;
-		multiplier = 1;
+		word_multiplier = 1;
 		while (game[v] != "" && v < 225) {
+			letter_multiplier = 1;
+			if (activeLetters.indexOf(v) != -1) {
+				if (document.getElementById("s"+ Math.floor(v/15+1) + "_" + Math.floor(v%15+1)).classList.contains("dl")) {
+					letter_multiplier = 2;
+				}
+				if (document.getElementById("s"+ Math.floor(v/15+1) + "_" + Math.floor(v%15+1)).classList.contains("tl")) {
+					letter_multiplier = 3;
+				}
+				if (document.getElementById("s"+ Math.floor(v/15+1) + "_" + Math.floor(v%15+1)).classList.contains("dw")) {
+					word_multiplier *= 2;
+				}
+				if (document.getElementById("s"+ Math.floor(v/15+1) + "_" + Math.floor(v%15+1)).classList.contains("tw")) {
+					word_multiplier *= 3;
+				}
+			}
 			word = word.concat(game[v]);
-			points += pointsPerLetter[game[v]];
+			points += letter_multiplier * pointsPerLetter[game[v]];
 			v += 15;
 		}
 		if (word.length > 1 && words.indexOf(word) == -1) {
 			words.push(word);
-			pointSum += points * multiplier;
+			pointSum += points * word_multiplier;
 		}
 	}
 	return [words, pointSum];
@@ -674,21 +740,21 @@ table, th, td
 </head>
 <body onload="startGame()">
 <table id="board">
-<tr><td id="s1_1"><td id="s1_2"><td id="s1_3"><td id="s1_4"><td id="s1_5"><td id="s1_6"><td id="s1_7"><td id="s1_8"><td id="s1_9"><td id="s1_10"><td id="s1_11"><td id="s1_12"><td id="s1_13"><td id="s1_14"><td id="s1_15"></tr>
-<tr><td id="s2_1"><td id="s2_2"><td id="s2_3"><td id="s2_4"><td id="s2_5"><td id="s2_6"><td id="s2_7"><td id="s2_8"><td id="s2_9"><td id="s2_10"><td id="s2_11"><td id="s2_12"><td id="s2_13"><td id="s2_14"><td id="s2_15"></tr>
-<tr><td id="s3_1"><td id="s3_2"><td id="s3_3"><td id="s3_4"><td id="s3_5"><td id="s3_6"><td id="s3_7"><td id="s3_8"><td id="s3_9"><td id="s3_10"><td id="s3_11"><td id="s3_12"><td id="s3_13"><td id="s3_14"><td id="s3_15"></tr>
-<tr><td id="s4_1"><td id="s4_2"><td id="s4_3"><td id="s4_4"><td id="s4_5"><td id="s4_6"><td id="s4_7"><td id="s4_8"><td id="s4_9"><td id="s4_10"><td id="s4_11"><td id="s4_12"><td id="s4_13"><td id="s4_14"><td id="s4_15"></tr>
-<tr><td id="s5_1"><td id="s5_2"><td id="s5_3"><td id="s5_4"><td id="s5_5"><td id="s5_6"><td id="s5_7"><td id="s5_8"><td id="s5_9"><td id="s5_10"><td id="s5_11"><td id="s5_12"><td id="s5_13"><td id="s5_14"><td id="s5_15"></tr>
-<tr><td id="s6_1"><td id="s6_2"><td id="s6_3"><td id="s6_4"><td id="s6_5"><td id="s6_6"><td id="s6_7"><td id="s6_8"><td id="s6_9"><td id="s6_10"><td id="s6_11"><td id="s6_12"><td id="s6_13"><td id="s6_14"><td id="s6_15"></tr>
-<tr><td id="s7_1"><td id="s7_2"><td id="s7_3"><td id="s7_4"><td id="s7_5"><td id="s7_6"><td id="s7_7"><td id="s7_8"><td id="s7_9"><td id="s7_10"><td id="s7_11"><td id="s7_12"><td id="s7_13"><td id="s7_14"><td id="s7_15"></tr>
-<tr><td id="s8_1"><td id="s8_2"><td id="s8_3"><td id="s8_4"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12"><td id="s8_13"><td id="s8_14"><td id="s8_15"></tr>
-<tr><td id="s9_1"><td id="s9_2"><td id="s9_3"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7"><td id="s9_8"><td id="s9_9"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13"><td id="s9_14"><td id="s9_15"></tr>
-<tr><td id="s10_1"><td id="s10_2"><td id="s10_3"><td id="s10_4"><td id="s10_5"><td id="s10_6"><td id="s10_7"><td id="s10_8"><td id="s10_9"><td id="s10_10"><td id="s10_11"><td id="s10_12"><td id="s10_13"><td id="s10_14"><td id="s10_15"></tr>
-<tr><td id="s11_1"><td id="s11_2"><td id="s11_3"><td id="s11_4"><td id="s11_5"><td id="s11_6"><td id="s11_7"><td id="s11_8"><td id="s11_9"><td id="s11_10"><td id="s11_11"><td id="s11_12"><td id="s11_13"><td id="s11_14"><td id="s11_15"></tr>
-<tr><td id="s12_1"><td id="s12_2"><td id="s12_3"><td id="s12_4"><td id="s12_5"><td id="s12_6"><td id="s12_7"><td id="s12_8"><td id="s12_9"><td id="s12_10"><td id="s12_11"><td id="s12_12"><td id="s12_13"><td id="s12_14"><td id="s12_15"></tr>
-<tr><td id="s13_1"><td id="s13_2"><td id="s13_3"><td id="s13_4"><td id="s13_5"><td id="s13_6"><td id="s13_7"><td id="s13_8"><td id="s13_9"><td id="s13_10"><td id="s13_11"><td id="s13_12"><td id="s13_13"><td id="s13_14"><td id="s13_15"></tr>
-<tr><td id="s14_1"><td id="s14_2"><td id="s14_3"><td id="s14_4"><td id="s14_5"><td id="s14_6"><td id="s14_7"><td id="s14_8"><td id="s14_9"><td id="s14_10"><td id="s14_11"><td id="s14_12"><td id="s14_13"><td id="s14_14"><td id="s14_15"></tr>
-<tr><td id="s15_1"><td id="s15_2"><td id="s15_3"><td id="s15_4"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12"><td id="s15_13"><td id="s15_14"><td id="s15_15"></tr>
+<tr><td id="s1_1" class="tw"><td id="s1_2"><td id="s1_3"><td id="s1_4" class="dl"><td id="s1_5"><td id="s1_6"><td id="s1_7"><td id="s1_8" class="tw"><td id="s1_9"><td id="s1_10"><td id="s1_11"><td id="s1_12" class="dl"><td id="s1_13"><td id="s1_14"><td id="s1_15" class="tw"></tr>
+<tr><td id="s2_1"><td id="s2_2" class="dw"><td id="s2_3"><td id="s2_4"><td id="s2_5"><td id="s2_6" class="tl"><td id="s2_7"><td id="s2_8"><td id="s2_9"><td id="s2_10" class="tl"><td id="s2_11"><td id="s2_12"><td id="s2_13"><td id="s2_14" class="dw"><td id="s2_15"></tr>
+<tr><td id="s3_1"><td id="s3_2"><td id="s3_3" class="dw"><td id="s3_4"><td id="s3_5"><td id="s3_6"><td id="s3_7" class="dl"><td id="s3_8"><td id="s3_9" class="dl"><td id="s3_10"><td id="s3_11"><td id="s3_12"><td id="s3_13" class="dw"><td id="s3_14"><td id="s3_15"></tr>
+<tr><td id="s4_1" class="dl"><td id="s4_2"><td id="s4_3"><td id="s4_4" class="dw"><td id="s4_5"><td id="s4_6"><td id="s4_7"><td id="s4_8" class="dl"><td id="s4_9"><td id="s4_10"><td id="s4_11"><td id="s4_12" class="dw"><td id="s4_13"><td id="s4_14"><td id="s4_15" class="dl"></tr>
+<tr><td id="s5_1"><td id="s5_2"><td id="s5_3"><td id="s5_4"><td id="s5_5" class="dw"><td id="s5_6"><td id="s5_7"><td id="s5_8"><td id="s5_9"><td id="s5_10"><td id="s5_11" class="dw"><td id="s5_12"><td id="s5_13"><td id="s5_14"><td id="s5_15"></tr>
+<tr><td id="s6_1"><td id="s6_2" class="tl"><td id="s6_3"><td id="s6_4"><td id="s6_5"><td id="s6_6" class="tl"><td id="s6_7"><td id="s6_8"><td id="s6_9"><td id="s6_10" class="tl"><td id="s6_11"><td id="s6_12"><td id="s6_13"><td id="s6_14" class="tl"><td id="s6_15"></tr>
+<tr><td id="s7_1"><td id="s7_2"><td id="s7_3" class="dl"><td id="s7_4"><td id="s7_5"><td id="s7_6"><td id="s7_7" class="dl"><td id="s7_8"><td id="s7_9" class="dl"><td id="s7_10"><td id="s7_11"><td id="s7_12"><td id="s7_13" class="dl"><td id="s7_14"><td id="s7_15"></tr>
+<tr><td id="s8_1" class="tw"><td id="s8_2"><td id="s8_3"><td id="s8_4" class="dl"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8" class="start dw"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12" class="dl"><td id="s8_13"><td id="s8_14"><td id="s8_15"></tr>
+<tr><td id="s9_1"><td id="s9_2"><td id="s9_3" class="dl"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7" class="dl"><td id="s9_8"><td id="s9_9" class="dl"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13" class="dl"><td id="s9_14"><td id="s9_15" class="tw"></tr>
+<tr><td id="s10_1"><td id="s10_2" class="tl"><td id="s10_3"><td id="s10_4"><td id="s10_5"><td id="s10_6" class="tl"><td id="s10_7"><td id="s10_8"><td id="s10_9"><td id="s10_10" class="tl"><td id="s10_11"><td id="s10_12"><td id="s10_13"><td id="s10_14" class="tl"><td id="s10_15"></tr>
+<tr><td id="s11_1"><td id="s11_2"><td id="s11_3"><td id="s11_4"><td id="s11_5" class="dw"><td id="s11_6"><td id="s11_7"><td id="s11_8"><td id="s11_9"><td id="s11_10"><td id="s11_11" class="dw"><td id="s11_12"><td id="s11_13"><td id="s11_14"><td id="s11_15"></tr>
+<tr><td id="s12_1" class="dl"><td id="s12_2"><td id="s12_3"><td id="s12_4" class="dw"><td id="s12_5"><td id="s12_6"><td id="s12_7"><td id="s12_8" class="dl"><td id="s12_9"><td id="s12_10"><td id="s12_11"><td id="s12_12" class="dw"><td id="s12_13"><td id="s12_14"><td id="s12_15" class="dl"></tr>
+<tr><td id="s13_1"><td id="s13_2"><td id="s13_3" class="dw"><td id="s13_4"><td id="s13_5"><td id="s13_6"><td id="s13_7" class="dl"><td id="s13_8"><td id="s13_9" class="dl"><td id="s13_10"><td id="s13_11"><td id="s13_12"><td id="s13_13" class="dw"><td id="s13_14"><td id="s13_15"></tr>
+<tr><td id="s14_1"><td id="s14_2" class="dw"><td id="s14_3"><td id="s14_4"><td id="s14_5"><td id="s14_6" class="tl"><td id="s14_7"><td id="s14_8"><td id="s14_9"><td id="s14_10" class="tl"><td id="s14_11"><td id="s14_12"><td id="s14_13"><td id="s14_14" class="dw"><td id="s14_15"></tr>
+<tr><td id="s15_1" class="tw"><td id="s15_2"><td id="s15_3"><td id="s15_4" class="dl"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8" class="tw"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12" class="dl"><td id="s15_13"><td id="s15_14"><td id="s15_15" class="tw"></tr>
 </table>
 
 Deine Buchstaben: <div id="player_1_letters"></div>
