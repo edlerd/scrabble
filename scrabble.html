@@ -104,7 +104,7 @@ txtFile.open("GET", "file:///C:/Users/razor/Documents/GitHub/scrabble/deutsch.tx
 txtFile.onreadystatechange = function()
 {
 	if (txtFile.readyState === 4) {
-		allText = txtFile.responseText.replace("oe","ö").replace("ue",'ü').replace('ae','ä').toUpperCase();
+		allText = txtFile.responseText.replace("OE","Ö").replace("UE",'Ü').replace('AE','Ä').toUpperCase();
 	}
 };
 txtFile.send(null);
@@ -246,6 +246,14 @@ function isValidWord(word) {
 		return false;
 	}
 	if (allText.match("\n" + word + "\n") != null) {
+		return true;
+	}
+	return false;
+}
+
+
+function isValidWordStart(word) {
+	if (allText.match("\n" + word) != null) {
 		return true;
 	}
 	return false;
@@ -464,14 +472,19 @@ function checkLetters() {
 	document.getElementById("move").innerHTML = "play it";
 	document.getElementById("move").disabled  = true;
 	
+	document.getElementById("input_container").innerHTML='waiting for ki';
+	document.getElementById("input_container").style.display= "block";
+
 	setTimeout(
 		function() {
 			// ki_intelligence: the closer to 1 the more clever the ki
 			ki_intelligence = 0.2;
 			computerMove();
+			document.getElementById("input_container").style.display= "none";
 			ki_intelligence = 1;
+			
 		},
-		10
+		100
 	);
 		
 	return true;
@@ -488,6 +501,20 @@ function hand_letter_clicked(elem) {
 	}
 }
 
+// show the input layer
+// to switch tiles with the sack
+function pass() {
+	var buttons=document.getElementsByClassName('hand_letter');
+	for (i=0; i<buttons.length; i++) {
+		buttons[i].onclick = hand_letter_clicked;
+	}
+	
+	var button = document.getElementById('pass');
+	button.innerHTML = 'select the letter to switch and click here when finished';
+	button.onclick = pass_perform;
+}
+
+// switch tiles with the sack
 function pass_perform() {
 	var letters=document.getElementsByClassName('selected_to_switch');
 	for (i=0; i<letters.length; i++) {
@@ -505,39 +532,42 @@ function pass_perform() {
 	computerMove();
 }
 
-// pass turn to exchange some tiles
-function pass() {
-	var buttons=document.getElementsByClassName('hand_letter');
-	for (i=0; i<buttons.length; i++) {
-		buttons[i].onclick = hand_letter_clicked;
-	}
-	
-	var button = document.getElementById('pass');
-	button.innerHTML = 'select the letter to switch and click here when finished';
-	button.onclick = pass_perform;
-}
-
 Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item);
 };
 
 /**
- * pos: free positions in game array
- * letters: available letters
- * result: used letters and their indexes
+ * pos: array of positions in game array to be filled with available letters
+ * letters: array of available letters
+ * result: object of indexes in game array and the letters to be set
  */
 function tryFreePositions(pos,letters,result) {
 
 	var tryPos = pos.pop();
 	activeLetters.push(tryPos);
 	
-	// try all letters
+	// try all letters available on current position
 	for (var k=0; k<letters.length; k++) {
 		var tempLetter = letters.splice(k,1)[0];
 		game[tryPos] = tempLetter;
 		result[tryPos] = tempLetter;
+
+		// more positions to fill, recurse
 		if (pos.length > 0) {
-			tryFreePositions(pos, letters,result);
+		
+			// recurse only if we have laid valid starts of words yet
+			var recurse = true;
+			var words = findWordsByActiveLetters()[0];
+			
+			for (i=0; i<words.length; i++) {
+				if (!isValidWordStart(words[i])) {
+					recurse = false;
+					break;
+				}
+			}
+			if (recurse) {
+				tryFreePositions(pos, letters,result);
+			}
 		} else {
 			var points = calculatePoints();
 			
@@ -561,44 +591,19 @@ function tryFreePositions(pos,letters,result) {
 	activeLetters.splice(activeLetters.indexOf(tryPos,1));
 }
 
-function getWordsFromLetterSalad(letters, currentWord, words) {
-	// try all the combinations and recurse with the remaining letters
-	var l = letters.length;
-	for (var i=0; i<l; i++) {
-		var tempWord = currentWord + letters[i];
-		
-		// there is no word which starts with this combination
-		if (allText.indexOf("\n" + tempWord) == -1) {
-			continue;
-		}
-		
-		// we already had this
-		if (words.indexOf(tempWord) != -1) {
-			continue;
-		}
-		
-		words.push(tempWord);
-		
-		var t = letters.splice(i,1)[0];
-		getWordsFromLetterSalad(letters, tempWord, words);
-		letters.insert(i,t);
-	}
-	return words.sort();
-}
-
 //fancy ki comes here
 function computerMove() {
-	drawTiles(player_2_letters);
 	
 	max_points = 0;
 	max_result = {};
 	
-	for (var step=0; step<15; step++) {
+	// try all rows
+	for (var row=0; row<15; row++) {
 
-		// try all rows
-		var row = step;
-		// the starting position inside the row
+		// try all starting positions within a row
 		for (var rowStart=0; rowStart < 14; rowStart++) {
+		
+			// beginning field of our word
 			var startPos = row*15 + rowStart;
 
 			// the field left of our current word is not empty
@@ -606,7 +611,10 @@ function computerMove() {
 				continue;
 			}
 			
+			// try all possible word lengths
 			for (var wordLength=2; wordLength < 15 - rowStart; wordLength++) {
+			
+				// end field of our word
 				var endPos = row*15 + rowStart + wordLength;
 				
 				// the field right of our current word is not empty
@@ -614,36 +622,42 @@ function computerMove() {
 					continue;
 				}
 				
-				var letters=[];
-				var free_positions=[];
-				var free_count=0;
-				var set_count=0;
+				var free_letter_positions=[];
+				var free_letter_count=0;
+				var set_letter_count=0;
 				for (var i=startPos; i < endPos; i++) {
 					if (game[i] == '') {
-						free_positions[free_count] = i;
-						free_count++;
+						free_letter_positions[free_letter_count] = i;
+						free_letter_count++;
 					} else {
-						set_count++;
+						set_letter_count++;
 					}
-					letters[i - startPos] = game[i];
 				}
 				
 				// no letter set or
 				// no free space to set a letter or
-				// too many free spaces for 4 letters
-				if (set_count==0 || free_count==0 || free_count > 3) {
+				// too many free spaces (should be up to number of tiles on player hand)
+				if (set_letter_count==0 || free_letter_count==0 || free_letter_count > 3) {
 					continue;
 				}
 				
-				best_try = tryFreePositions(free_positions, player_2_letters, {});
+				best_try = tryFreePositions(free_letter_positions, player_2_letters, {});
 			}
-		} // end rowStart
+		} 
+	
+		console.log('best fit after row' + row);
+		console.log(max_points);
+		console.log(max_result);
+	}
 		
 		
-		// try all columns
-		var column = step;
+	// try all columns
+	for (var column=0; column<15; column++) {
+	
 		// the starting position inside the column
 		for (var columnStart=0; columnStart < 14; columnStart++) {
+		
+			// beginning field of our word
 			var startPos = column + 15*columnStart;
 
 			// the field on top of our current word is not empty
@@ -651,40 +665,41 @@ function computerMove() {
 				continue;
 			}
 			
+			// try all possible word lengths
 			for (var wordLength=2; wordLength < 15 - columnStart; wordLength++) {
+				
+				// end field of our word
 				var endPos = startPos + ( 15 * wordLength );
 				
-				// the field under our current word is not empty
+				// the field below our current word is not empty
 				if (endPos + 15 < 225 && game[endPos+15] != '') {
 					continue;
 				}
 				
-				var letters=[];
-				var free_positions=[];
-				var free_count=0;
-				var set_count=0;
+				var free_letter_positions=[];
+				var free_letter_count=0;
+				var set_letter_count=0;
 				for (var i=startPos; i < endPos; i+=15) {
 					if (game[i] == '') {
-						free_positions[free_count] = i;
-						free_count++;
+						free_letter_positions[free_letter_count] = i;
+						free_letter_count++;
 					} else {
-						set_count++;
+						set_letter_count++;
 					}
-					letters[i - startPos] = game[i];
 				}
 				
 				// no letter set or
 				// no free space to set a letter or
-				// too many free spaces for 4 letters
-				if (set_count==0 || free_count==0 || free_count > 3) {
+				// too many free spaces (should be up to number of tiles on player hand)
+				if (set_letter_count==0 || free_letter_count==0 || free_letter_count > 3) {
 					continue;
 				}
 				
-				best_try = tryFreePositions(free_positions, player_2_letters, {});
+				best_try = tryFreePositions(free_letter_positions, player_2_letters, {});
 			}
-		} // end columnStart
+		}
 		
-		console.log('best offer:');
+		console.log('best fit after column ' + column);
 		console.log(max_points);
 		console.log(max_result);
 	}
@@ -700,6 +715,10 @@ function computerMove() {
 	activeLetters.length=0;
 
 	console.log(player_2_letters);
+	
+	// fill ki letters if necessary
+	drawTiles(player_2_letters);
+	
 	printBoard();
 }
 
@@ -717,6 +736,7 @@ function startGame() {
 	document.getElementById("move").disabled = true;
 
 	drawTiles(player_1_letters);
+	drawTiles(player_2_letters);
 	printLetters();
 	printBoard();
 }
@@ -818,9 +838,9 @@ table, th, td
 </table>
 
 Deine Buchstaben: <div id="player_1_letters"></div>
-<button onclick="resetCurrentTiles()">recall</button>
-<button onclick="checkLetters()" id="move">play it</button>
-<button onclick="pass()" id="pass">pass</button>
+<button onclick="resetCurrentTiles()">zurücknehmen</button>
+<button onclick="checkLetters()" id="move">spielen</button>
+<button onclick="pass()" id="pass">tauschen</button>
 
 <div>
 <div class="player_name">Du: </div><div class="player_name" id="player_1_points">0</div><br>
