@@ -511,7 +511,7 @@ function pass() {
 	}
 	
 	var button = document.getElementById('pass');
-	button.innerHTML = 'Wähle die Buchstaben aus, welche Du tauschen möchtest';
+	button.innerHTML = 'Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier';
 	button.onclick = pass_perform;
 }
 
@@ -528,7 +528,7 @@ function pass_perform() {
 	printLetters();
 	
 	var button = document.getElementById('pass');
-	button.innerHTML = 'pass';
+	button.innerHTML = 'Buchstaben tauschen (passen)';
 	button.onclick = pass;
 	computerMove();
 }
@@ -841,7 +841,7 @@ table, th, td
 Deine Buchstaben: <div id="player_1_letters"></div>
 <button onclick="resetCurrentTiles()">alles zurück auf die Hand</button>
 <button onclick="checkLetters()" id="move">spielen</button>
-<button onclick="pass()" id="pass">Buchstaben tauschen</button>
+<button onclick="pass()" id="pass">Buchstaben tauschen (passen)</button>
 
 <div>
 <div class="player_name">DU: </div><div class="player_name" id="player_1_points">0</div><br>
