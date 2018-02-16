@@ -117,13 +117,15 @@ function showLetterInput(elem) {
 
 	// if there is already a active tile, remove it.
 	if (elem.target.bgColor == "Yellow") {
-		var letter = game[x*15+y];
+		var returnedIndex = x * 15 + y;
+		var letter = game[returnedIndex];
 		game[x*15+y] = "";
-		activeLetters.splice(activeLetters.indexOf(letter,1));
+		activeLetters.splice(activeLetters.indexOf(returnedIndex), 1);
 		player_1_letters.push(letter);
 		elem.target.bgColor = "White";
 		printLetters();
 		printBoard();
+		updatePlayButton();
 		return;
 	}
 	
@@ -178,13 +180,16 @@ function letterClicked(elem) {
 	activeLetters.push(x*15 + y);
 	printLetters();
 	printBoard();
-	
-	// update play button
+	updatePlayButton();
+}
+
+function updatePlayButton() {
 	var points = calculatePoints();
 	if (points) {
 		document.getElementById("move").innerHTML = "play it (" + points + ")";
 		document.getElementById("move").disabled = false;
 	} else {
+		document.getElementById("move").innerHTML = "play it";
 		document.getElementById("move").disabled = true;
 	}
 }
@@ -238,6 +243,7 @@ function resetCurrentTiles() {
 	activeLetters.length=0;
 	printLetters();
 	printBoard();
+	updatePlayButton();
 }
 
 // dictionary lookup
@@ -469,8 +475,7 @@ function checkLetters() {
 	printLetters();
 	printBoard();
 	
-	document.getElementById("move").innerHTML = "play it";
-	document.getElementById("move").disabled  = true;
+	updatePlayButton();
 	
 	document.getElementById("input_container").innerHTML='waiting for ki';
 	document.getElementById("input_container").style.display= "block";
@@ -510,7 +515,7 @@ function pass() {
 	}
 	
 	var button = document.getElementById('pass');
-	button.innerHTML = 'select the letter to switch and click here when finished';
+	button.innerHTML = 'select letters to be swapped and click here when finished';
 	button.onclick = pass_perform;
 }
 
@@ -588,7 +593,7 @@ function tryFreePositions(pos,letters,result) {
 	}
 	
 	pos.push(tryPos);
-	activeLetters.splice(activeLetters.indexOf(tryPos,1));
+	activeLetters.splice(activeLetters.indexOf(tryPos), 1);
 }
 
 //fancy ki comes here
@@ -837,15 +842,15 @@ table, th, td
 <tr><td id="s15_1" class="tw"><td id="s15_2"><td id="s15_3"><td id="s15_4" class="dl"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8" class="tw"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12" class="dl"><td id="s15_13"><td id="s15_14"><td id="s15_15" class="tw"></tr>
 </table>
 
-Deine Buchstaben: <div id="player_1_letters"></div>
-<button onclick="resetCurrentTiles()">zurücknehmen</button>
-<button onclick="checkLetters()" id="move">spielen</button>
-<button onclick="pass()" id="pass">tauschen</button>
+Your available letters: <div id="player_1_letters"></div>
+<button onclick="resetCurrentTiles()">take back all tiles</button>
+<button onclick="checkLetters()" id="move">play it</button>
+<button onclick="pass()" id="pass">swap letters</button>
 
 <div>
-<div class="player_name">Du: </div><div class="player_name" id="player_1_points">0</div><br>
+<div class="player_name">You: </div><div class="player_name" id="player_1_points">0</div><br>
 <div class="player_name">KI: </div><div class="player_name" id="player_2_points">0</div>
-<div class="letters_left">Buchstaben übrig: <span id="letters_left"></span></div>
+<div class="letters_left">Letters left in stack: <span id="letters_left"></span></div>
 </div>
 
 <div id="input_container"></div>
