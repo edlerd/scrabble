@@ -505,6 +505,8 @@ function hand_letter_clicked(elem) {
 // show the input layer
 // to switch tiles with the sack
 function pass() {
+    resetCurrentTiles();
+
 	var buttons=document.getElementsByClassName('hand_letter');
 	for (var i=0; i<buttons.length; i++) {
 		buttons[i].onclick = hand_letter_clicked;
