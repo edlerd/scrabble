@@ -471,7 +471,9 @@ function checkLetters() {
 	drawTiles(PLAYER_1_LETTERS);
 	printLetters();
 	printBoard();
-	
+    startKiMove();
+
+function startKiMove() {
 	updatePlayButton();
 	
 	document.getElementById("input_container").innerHTML='waiting for ki';
@@ -488,7 +490,7 @@ function checkLetters() {
 		},
 		100
 	);
-		
+
 	return true;
 }
 
@@ -532,7 +534,8 @@ function pass_perform() {
 	var button = document.getElementById('pass');
 	button.innerHTML = 'Buchstaben tauschen (passen)';
 	button.onclick = pass;
-	computerMove();
+
+    startKiMove();
 }
 
 Array.prototype.insert = function (index, item) {
