@@ -220,8 +220,17 @@ function printBoard() {
 	for (var i=0; i<15; i++) {
 		for (var j=0; j<15; j++) {
             BOARD.rows[i].cells[j].innerHTML=BOARD_LETTERS[i * 15 + j];
+            
+            if (BOARD_LETTERS[i * 15 + j] === '') {
+                BOARD.rows[i].cells[j].style.cursor = "pointer";
+            } else {
+                BOARD.rows[i].cells[j].style.cursor = "auto";
+            }
+
 			if (TO_BE_PLAYED_BOARD_LETTER_INDEXES.indexOf(i * 15 + j) !== -1) {
                 BOARD.rows[i].cells[j].bgColor = "Yellow";
+
+                BOARD.rows[i].cells[j].style.cursor = "no-drop";
 			} else {
                 BOARD.rows[i].cells[j].bgColor = "White";
 			}
@@ -757,8 +766,11 @@ table, th, td
 }
 
 .input_letter {
+	cursor: pointer;
+	font-weight: bold;
 	display: inline-block;
 	margin: 5px;
+	padding: 5px;
 	border: 1px solid orange;
 	background-color: white;
 	color: initial;
@@ -781,6 +793,7 @@ table, th, td
 }
 
 .hand_letter {
+	font-weight: bold;
 	display: inline-block;
 	width: 20px;
 	text-align: left;
@@ -825,7 +838,7 @@ table, th, td
 </style>
 </head>
 <body onload="startGame()">
-<table id="board">
+<table id="board" style="font-weight: bold">
 <tr><td id="s1_1" class="tw"><td id="s1_2"><td id="s1_3"><td id="s1_4" class="dl"><td id="s1_5"><td id="s1_6"><td id="s1_7"><td id="s1_8" class="tw"><td id="s1_9"><td id="s1_10"><td id="s1_11"><td id="s1_12" class="dl"><td id="s1_13"><td id="s1_14"><td id="s1_15" class="tw"></tr>
 <tr><td id="s2_1"><td id="s2_2" class="dw"><td id="s2_3"><td id="s2_4"><td id="s2_5"><td id="s2_6" class="tl"><td id="s2_7"><td id="s2_8"><td id="s2_9"><td id="s2_10" class="tl"><td id="s2_11"><td id="s2_12"><td id="s2_13"><td id="s2_14" class="dw"><td id="s2_15"></tr>
 <tr><td id="s3_1"><td id="s3_2"><td id="s3_3" class="dw"><td id="s3_4"><td id="s3_5"><td id="s3_6"><td id="s3_7" class="dl"><td id="s3_8"><td id="s3_9" class="dl"><td id="s3_10"><td id="s3_11"><td id="s3_12"><td id="s3_13" class="dw"><td id="s3_14"><td id="s3_15"></tr>
