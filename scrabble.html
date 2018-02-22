@@ -29,9 +29,13 @@ var TO_BE_PLAYED_BOARD_LETTER_INDEXES = [];
 var LETTER_STASH;
 var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
+const LANG_ENGLISH = 'english';
+const LANG_GERMAN = 'deutsch';
+const ENGLISH_CONFIG_URL = 'https://77177.de/scrabble/scrabble/configEnglish.jsonp';
+const GERMAN_CONFIG_URL = 'https://77177.de/scrabble/scrabble/configDeutsch.jsonp';
 loadLanguageConfig();
 
-function getParameterByName(name, url) {
+function getUrlParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -42,14 +46,58 @@ function getParameterByName(name, url) {
 }
 
 function getConfigUrl() {
-    var lang = getParameterByName('lang');
+    var lang = getUrlParameterByName('lang');
 
     switch (lang) {
-        case "english":
-            return "https://77177.de/scrabble/scrabble/configEnglish.jsonp";
+        case LANG_ENGLISH:
+            return ENGLISH_CONFIG_URL;
+        case LANG_GERMAN:
         default:
-            return "https://77177.de/scrabble/scrabble/configDeutsch.jsonp";
+            return GERMAN_CONFIG_URL;
     }
+}
+
+function i18n(text) {
+    var lang = getUrlParameterByName('lang');
+
+    var translationMap = {
+        "alles zurück auf die Hand": {
+            "english": "Unset selected letters"
+        },
+        "Buchstaben tauschen (passen)": {
+            "english": "swap letters (skips this turn)"
+        },
+        "Übrige Buchstaben": {
+            "english": "Letters left in stack"
+        },
+        "Deine Buchstaben": {
+            "english": "Your letters"
+        },
+        "spielen": {
+            "english": "set letters"
+        },
+        "Dreifacher Buchstabenwert": {
+            "english": "triple letter value"
+        },
+        "Doppelter Buchtstabenwert": {
+            "english": "double letter value"
+        },
+        "Dreifacher Wortwert": {
+            "english": "triple word value"
+        },
+        "Doppelter Wortwert": {
+            "english": "double word value"
+        },
+        "Welchen Buchstaben möchtest du setzen?": {
+            "english": "Which letter do you want to set?"
+        }
+    };
+
+    if (translationMap[text] && translationMap[text][lang]) {
+        return translationMap[text][lang];
+    }
+
+    return text;
 }
 
 function loadLanguageConfig() {
@@ -129,7 +177,7 @@ function showLetterInput(elem) {
     var input_container = document.getElementById("input_container");
     input_container.style.padding= (elem.srcElement.offsetTop + 10) + " 0 0 " + (elem.srcElement.offsetLeft + 55);
     input_container.style.display= "block";
-    input_container.innerHTML = "Welchen Buchstaben möchtest du hier setzen?<br><div class='input_letter'>" + PLAYER_1_LETTERS.join("</div><div class='input_letter'>") + "</div>";
+    input_container.innerHTML = i18n('Welchen Buchstaben möchtest du hier setzen?') + "<br><div class='input_letter'>" + PLAYER_1_LETTERS.join("</div><div class='input_letter'>") + "</div>";
 
     // append event listeners to input buttons
     var buttons=document.getElementsByClassName("input_letter");
@@ -835,23 +883,32 @@ table, th, td
 <tr><td id="s15_1" class="tw"><td id="s15_2"><td id="s15_3"><td id="s15_4" class="dl"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8" class="tw"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12" class="dl"><td id="s15_13"><td id="s15_14"><td id="s15_15" class="tw"></tr>
 </table>
 
-Deine Buchstaben: <div id="player_1_letters"></div>
-<button onclick="takeBackCurrentTiles()">alles zurück auf die Hand</button>
-<button onclick="onFinishMoveClick()" id="move">spielen</button>
-<button onclick="onSelectSwapTilesClicked()" id="pass">Buchstaben tauschen (passen)</button>
+<script>document.write(i18n("Deine Buchstaben"))</script>: <div id="player_1_letters"></div>
+<button onclick="takeBackCurrentTiles()"><script>document.write(i18n("alles zurück auf die Hand"))</script></button>
+<button onclick="onFinishMoveClick()" id="move"><script>document.write(i18n("spielen"))</script></button>
+<button onclick="onSelectSwapTilesClicked()" id="pass"><script>document.write(i18n("Buchstaben tauschen (passen)"))</script></button>
 
 <div>
-<div class="player_name">DU: </div><div class="player_name" id="player_1_points">0</div><br>
-<div class="player_name">KI: </div><div class="player_name" id="player_2_points">0</div>
-<div class="letters_left">Übrige Buchstaben: <span id="letters_left"></span></div>
+<div class="player_name"><script>document.write(i18n("DU"))</script>: </div><div class="player_name" id="player_1_points">0</div><br>
+<div class="player_name"><script>document.write(i18n("KI"))</script>: </div><div class="player_name" id="player_2_points">0</div>
+<div class="letters_left"><script>document.write(i18n("Übrige Buchstaben"))</script>: <span id="letters_left"></span></div>
 </div>
 
 <div>
-    <span class="dw" style="display: inline-block; height: 20px; width: 20px"></span>Doppelter Wortwert<br/>
-    <span class="tw" style="display: inline-block; height: 20px; width: 20px"></span>Dreifacher Wortwert<br/>
-    <span class="dl" style="display: inline-block; height: 20px; width: 20px"></span>Doppelter Buchtstabenwert<br/>
-    <span class="tl" style="display: inline-block; height: 20px; width: 20px"></span>Dreifacher Buchstabenwert<br/>
+    <span class="dw" style="display: inline-block; height: 20px; width: 20px"></span><script>document.write(i18n("Doppelter Wortwert"))</script><br/>
+    <span class="tw" style="display: inline-block; height: 20px; width: 20px"></span><script>document.write(i18n("Dreifacher Wortwert"))</script><br/>
+    <span class="dl" style="display: inline-block; height: 20px; width: 20px"></span><script>document.write(i18n("Doppelter Buchtstabenwert"))</script><br/>
+    <span class="tl" style="display: inline-block; height: 20px; width: 20px"></span><script>document.write(i18n("Dreifacher Buchstabenwert"))</script><br/>
 </div>
+
+<ul>
+    <li>
+        <a href="?lang=english">Switch language to english (resets current game)</a>
+    </li>
+    <li>
+        <a href="?lang=english">Deutsche Sprache auswählen (beendet das aktuelle Spiel)</a>
+    </li>
+</ul>
 
 <div id="input_container"></div>
 </body>
