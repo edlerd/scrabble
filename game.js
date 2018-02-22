@@ -26,6 +26,7 @@ const LANG_ENGLISH = 'english';
 const LANG_GERMAN = 'deutsch';
 const ENGLISH_CONFIG_URL = 'config/english.jsonp';
 const GERMAN_CONFIG_URL = 'config/german.jsonp';
+var TRANSLATION_MAP;
 loadLanguageConfig();
 
 function getUrlParameterByName(name, url) {
@@ -53,53 +54,8 @@ function getConfigUrl() {
 function i18n(text) {
   var lang = getUrlParameterByName('lang');
 
-  var translationMap = {
-    "alles zurück auf die Hand": {
-      "english": "Unset selected letters"
-    },
-    "Buchstaben tauschen (passen)": {
-      "english": "swap letters (skips this turn)"
-    },
-    "Übrige Buchstaben": {
-      "english": "Letters left in stash"
-    },
-    "Deine Buchstaben": {
-      "english": "Your letters"
-    },
-    "spielen": {
-      "english": "set letters"
-    },
-    "Dreifacher Buchstabenwert": {
-      "english": "triple letter value"
-    },
-    "Doppelter Buchtstabenwert": {
-      "english": "double letter value"
-    },
-    "Dreifacher Wortwert": {
-      "english": "triple word value"
-    },
-    "Doppelter Wortwert": {
-      "english": "double word value"
-    },
-    "Welchen Buchstaben möchtest du hier setzen?": {
-      "english": "Which letter do you want to set?"
-    },
-    "DU": {
-      "english": "YOU"
-    },
-    "KI": {
-      "english": "AI"
-    },
-    "Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier": {
-      "english": "Choose the letters you want to swap, then click here"
-    },
-    "Das Spiel ist aus.": {
-      "english": "Game is over."
-    }
-  };
-
-  if (translationMap[text] && translationMap[text][lang]) {
-    return translationMap[text][lang];
+  if (TRANSLATION_MAP[text] && TRANSLATION_MAP[text][lang]) {
+    return TRANSLATION_MAP[text][lang];
   }
 
   return text;
@@ -115,6 +71,20 @@ function loadLanguageConfig() {
       LANGUAGE_CONFIG = JSON.parse(request.responseText);
       LETTER_STASH = LANGUAGE_CONFIG.LETTER_STASH;
       POINTS_PER_LETTER = LANGUAGE_CONFIG.POINTS_PER_LETTER;
+      loadTranslationMap();
+    }
+  };
+  request.send(null);
+}
+
+function loadTranslationMap() {
+  var request = new XMLHttpRequest();
+  var configUrl = getConfigUrl();
+  request.open("GET", 'translation.jsonp', true);
+  request.onreadystatechange = function()
+  {
+    if (request.readyState === 4) {
+      TRANSLATION_MAP = JSON.parse(request.responseText);
       loadDictionary();
     }
   };
@@ -127,7 +97,8 @@ var PLAYER_1_POINTS  = 0;
 var PLAYER_2_LETTERS = [];
 var PLAYER_2_POINTS  = 0;
 
-var KI_INTELLIGENCE = 1; // from 0 to 1
+var KI_INTELLIGENCE = 1;
+var KI_MAX_INTELLIGENCE = 0.2;
 
 var MAX_POINTS = 0;
 var MAX_RESULT = {};
@@ -505,6 +476,10 @@ function onFinishMoveClick() {
   startKiMove();
 }
 
+function setKiMaxStrength(src) {
+  KI_MAX_INTELLIGENCE = src.value;
+}
+
 function startKiMove() {
   updatePlayButton();
 
@@ -514,7 +489,7 @@ function startKiMove() {
   setTimeout(
     function() {
       // ki_intelligence: the closer to 1 the more clever the ki
-      KI_INTELLIGENCE = 0.2;
+      KI_INTELLIGENCE = KI_MAX_INTELLIGENCE;
       computerMove();
       document.getElementById("input_container").style.display= "none";
       KI_INTELLIGENCE = 1;

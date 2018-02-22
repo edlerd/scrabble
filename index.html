@@ -57,6 +57,16 @@
   </li>
 </ul>
 
+<script>document.write(i18n("Wähle die Stärke des Computers"))</script>
+<select class="ai_strength" onchange="setKiMaxStrength(this)">
+  <option value="0.1"><script>document.write(i18n("schwach"))</script></option>
+  <option value="0.2" selected><script>document.write(i18n("normal"))</script></option>
+  <option value="0.3"><script>document.write(i18n("stark"))</script></option>
+  <option value="0.5"><script>document.write(i18n("sehr stark"))</script></option>
+  <option value="0.7"><script>document.write(i18n("sehr sehr stark"))</script></option>
+  <option value="1"><script>document.write(i18n("unbesiegbar"))</script></option>
+</select>
+
 <div id="input_container"></div>
 
 </body>
