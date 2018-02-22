@@ -92,6 +92,9 @@ function i18n(text) {
         },
         "Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier": {
             "english": "Choose the letters you want to swap, then click here"
+        },
+        "Das Spiel ist aus.": {
+            "english": "Game is over."
         }
     };
 
@@ -574,7 +577,7 @@ function incrementAndCheckPassCount() {
     if (BOTH_PLAYERS_PASS_COUNT >= 2) {
         document.getElementById("move").disabled = true;
         document.getElementById('pass').disabled = false;
-        alert('Das Spiel ist aus.');
+        alert(i18n('Das Spiel ist aus.'));
     }
 }
 
