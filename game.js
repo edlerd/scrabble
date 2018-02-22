@@ -26,7 +26,6 @@ const LANG_ENGLISH = 'english';
 const LANG_GERMAN = 'deutsch';
 const ENGLISH_CONFIG_URL = 'config/english.jsonp';
 const GERMAN_CONFIG_URL = 'config/german.jsonp';
-var TRANSLATION_MAP;
 loadLanguageConfig();
 
 function getUrlParameterByName(name, url) {
@@ -71,20 +70,6 @@ function loadLanguageConfig() {
       LANGUAGE_CONFIG = JSON.parse(request.responseText);
       LETTER_STASH = LANGUAGE_CONFIG.LETTER_STASH;
       POINTS_PER_LETTER = LANGUAGE_CONFIG.POINTS_PER_LETTER;
-      loadTranslationMap();
-    }
-  };
-  request.send(null);
-}
-
-function loadTranslationMap() {
-  var request = new XMLHttpRequest();
-  var configUrl = getConfigUrl();
-  request.open("GET", 'translation.jsonp', true);
-  request.onreadystatechange = function()
-  {
-    if (request.readyState === 4) {
-      TRANSLATION_MAP = JSON.parse(request.responseText);
       loadDictionary();
     }
   };
