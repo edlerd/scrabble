@@ -169,7 +169,7 @@ function drawTiles(player_var) {
 function printPlayersLetters() {
     var out = "";
     for (var i=0; i<PLAYER_1_LETTERS.length; i++) {
-        out += '<div class="hand_letter">' + PLAYER_1_LETTERS[i] + '</div><div class="hand_letter_points">' + POINTS_PER_LETTER[PLAYER_1_LETTERS[i]] + '</div>';
+        out += '<div class="hand_letter">' + PLAYER_1_LETTERS[i] + '<div class="hand_letter_points">' + POINTS_PER_LETTER[PLAYER_1_LETTERS[i]] + '</div></div>';
     }
     document.getElementById("player_1_letters").innerHTML = out;
 }
