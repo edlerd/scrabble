@@ -88,8 +88,14 @@ function i18n(text) {
         "Doppelter Wortwert": {
             "english": "double word value"
         },
-        "Welchen Buchstaben möchtest du setzen?": {
+        "Welchen Buchstaben möchtest du hier setzen?": {
             "english": "Which letter do you want to set?"
+        },
+        "DU": {
+            "english": "You"
+        },
+        "Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier": {
+            "english": "Choose the letters you want to swap, then click here"
         }
     };
 
@@ -220,10 +226,10 @@ function letterClicked(elem) {
 function updatePlayButton() {
     var points = checkValidStateAndCalculatePoints();
     if (points) {
-        document.getElementById("move").innerHTML = "spielen (" + points + ")";
+        document.getElementById("move").innerHTML = i18n("spielen") + " (" + points + ")";
         document.getElementById("move").disabled = false;
     } else {
-        document.getElementById("move").innerHTML = "spielen";
+        document.getElementById("move").innerHTML = i18n("spielen");
         document.getElementById("move").disabled = true;
     }
 }
@@ -539,7 +545,7 @@ function onSelectSwapTilesClicked() {
     }
 
     var button = document.getElementById('pass');
-    button.innerHTML = 'Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier';
+    button.innerHTML = i18n('Wähle die Buchstaben aus, welche Du tauschen möchtest, dann klicke hier');
     button.onclick = onPerformSwapTiles;
 }
 
