@@ -24,8 +24,8 @@ var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
 const LANG_ENGLISH = 'english';
 const LANG_GERMAN = 'deutsch';
-const ENGLISH_CONFIG_URL = 'https://77177.de/scrabble/scrabble/configEnglish.jsonp';
-const GERMAN_CONFIG_URL = 'https://77177.de/scrabble/scrabble/configDeutsch.jsonp';
+const ENGLISH_CONFIG_URL = 'https://77177.de/scrabble/configEnglish.jsonp';
+const GERMAN_CONFIG_URL = 'https://77177.de/scrabble/configDeutsch.jsonp';
 loadLanguageConfig();
 
 function getUrlParameterByName(name, url) {
