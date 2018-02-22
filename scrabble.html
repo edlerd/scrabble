@@ -68,7 +68,7 @@ function i18n(text) {
             "english": "swap letters (skips this turn)"
         },
         "Übrige Buchstaben": {
-            "english": "Letters left in stack"
+            "english": "Letters left in stash"
         },
         "Deine Buchstaben": {
             "english": "Your letters"
@@ -561,7 +561,7 @@ function onPerformSwapTiles() {
     printPlayersLetters();
 
     var button = document.getElementById('pass');
-    button.innerHTML = 'Buchstaben tauschen (passen)';
+    button.innerHTML = i18n('Buchstaben tauschen (passen)');
     button.onclick = onSelectSwapTilesClicked;
 
     incrementAndCheckPassCount();
