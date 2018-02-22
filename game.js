@@ -581,9 +581,6 @@ function tryFreePositions(pos,letters,result) {
         MAX_POINTS = points;
         //copy by value
         MAX_RESULT = JSON.parse(JSON.stringify(result));
-        console.log('found it');
-        console.log(points);
-        console.log(result);
       }
     }
     BOARD_LETTERS[tryPos] = '';
@@ -647,10 +644,6 @@ function computerMove() {
         best_try = tryFreePositions(free_letter_positions, PLAYER_2_LETTERS, {});
       }
     }
-
-    console.log('best fit after row' + row);
-    console.log(MAX_POINTS);
-    console.log(MAX_RESULT);
   }
 
   // try all columns
@@ -701,10 +694,6 @@ function computerMove() {
         best_try = tryFreePositions(free_letter_positions, PLAYER_2_LETTERS, {});
       }
     }
-
-    console.log('best fit after column ' + column);
-    console.log(MAX_POINTS);
-    console.log(MAX_RESULT);
   }
 
   PLAYER_2_POINTS += MAX_POINTS;
@@ -722,8 +711,6 @@ function computerMove() {
   }
 
   TO_BE_PLAYED_BOARD_LETTER_INDEXES.length=0;
-
-  console.log(PLAYER_2_LETTERS);
 
   // fill ki letters if necessary
   drawTiles(PLAYER_2_LETTERS);
