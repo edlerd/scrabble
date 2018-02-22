@@ -548,7 +548,7 @@ function onSelectSwapTilesClicked() {
 function onPerformSwapTiles() {
     var letters = document.getElementsByClassName('selected_to_switch');
     for (var i = 0; i < letters.length; i++) {
-        var letter = letters[i].innerHTML;
+        var letter = letters[i].innerHTML.charAt(0);
         var letter_position = PLAYER_1_LETTERS.indexOf(letter);
         PLAYER_1_LETTERS.splice(letter_position,1);
     }
