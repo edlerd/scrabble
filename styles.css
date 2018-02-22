@@ -89,3 +89,7 @@ table, th, td {
 #board {
   font-weight: bold;
 }
+
+#your_letters {
+  margin-top: 10px;
+}
