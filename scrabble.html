@@ -40,7 +40,7 @@ function loadLanguageConfig() {
             LANGUAGE_CONFIG = JSON.parse(request.responseText);
             LETTER_STASH = LANGUAGE_CONFIG.LETTER_STASH;
             POINTS_PER_LETTER = LANGUAGE_CONFIG.POINTS_PER_LETTER;
-            startGame();
+            loadDictionary();
         }
     };
     request.send(null);
@@ -60,7 +60,6 @@ var MAX_RESULT = {};
 var BOTH_PLAYERS_PASS_COUNT = 0;
 
 var DICTIONARY = [];
-loadDictionary();
 
 function loadDictionary() {
     var request = new XMLHttpRequest();
@@ -69,6 +68,7 @@ function loadDictionary() {
     {
         if (request.readyState === 4) {
             DICTIONARY = request.responseText.replace("OE","Ö").replace("UE",'Ü').replace('AE','Ä').toUpperCase();
+            startGame();
         }
     };
     request.send(null);
@@ -759,7 +759,7 @@ table, th, td
     width: 24px;
     height: 24px;
     padding-top: 5px;
-padding-left: 5px;
+    padding-left: 5px;
 }
 .hand_letter_points {
 	display: inline;
