@@ -31,9 +31,31 @@ var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
 loadLanguageConfig();
 
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function getConfigUrl() {
+    var lang = getParameterByName('lang');
+
+    switch (lang) {
+        case "english":
+            return "https://77177.de/scrabble/scrabble/configEnglish.jsonp";
+        default:
+            return "https://77177.de/scrabble/scrabble/configDeutsch.jsonp";
+    }
+}
+
 function loadLanguageConfig() {
     var request = new XMLHttpRequest();
-    request.open("GET", "https://77177.de/scrabble/scrabble/configDeutsch.jsonp", true);
+    var configUrl = getConfigUrl();
+    request.open("GET", configUrl, true);
     request.onreadystatechange = function()
     {
         if (request.readyState === 4) {
@@ -758,8 +780,8 @@ table, th, td
     margin: 10px;
     width: 24px;
     height: 24px;
-    padding-top: 5px;
-    padding-left: 5px;
+    padding-top: 7px;
+    padding-left: 9px;
 }
 .hand_letter_points {
 	display: inline;
