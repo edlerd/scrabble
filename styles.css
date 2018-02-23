@@ -1,11 +1,17 @@
 body {
+  background: #3b874b;
   font-family: Verdana,Arial,Helvetica,sans-serif;
 }
 
-th, td {
-  border: 1px solid black;
+table {
+  border-collapse: collapse;
+}
+
+td {
+  background: #47b75e;
+  border: 1px solid #d4fcdb;
   min-width: 24px;
-  height: 28px;
+  height: 27px;
   text-align: center;
 }
 
@@ -37,10 +43,10 @@ th, td {
 }
 
 .hand_letter {
+  background: #f3e797;
   font-weight: bold;
   display: inline-block;
   text-align: left;
-  border: 1px dotted;
   margin: 10px;
   width: 24px;
   height: 24px;
