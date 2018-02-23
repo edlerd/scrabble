@@ -112,13 +112,13 @@ function showLetterInput(elem) {
   var y = parseInt(targetPosition[1]) - 1;
 
   // if there is already a active tile, remove it.
-  if (elem.target.bgColor === "Yellow") {
+  if (elem.target.classList.contains('player_set_tile')) {
     var returnedIndex = x * 15 + y;
     var letter = BOARD_LETTERS[returnedIndex];
     BOARD_LETTERS[x*15+y] = "";
     TO_BE_PLAYED_BOARD_LETTER_INDEXES.splice(TO_BE_PLAYED_BOARD_LETTER_INDEXES.indexOf(returnedIndex), 1);
     PLAYER_1_LETTERS.push(letter);
-    elem.target.bgColor = "White";
+    elem.target.classList.remove('player_set_tile');
     printPlayersLetters();
     printBoard();
     updatePlayButton();
@@ -131,7 +131,6 @@ function showLetterInput(elem) {
   }
 
   // mark target cell
-  elem.srcElement.bgColor="orange";
   elem.srcElement.classList.add("input_here");
 
   // show the input layer
@@ -208,20 +207,22 @@ function printPlayersLetters() {
 function printBoard() {
   for (var i=0; i<15; i++) {
     for (var j=0; j<15; j++) {
-      BOARD.rows[i].cells[j].innerHTML=BOARD_LETTERS[i * 15 + j];
+      var field = BOARD.rows[i].cells[j];
+      field.innerHTML=BOARD_LETTERS[i * 15 + j];
 
       if (BOARD_LETTERS[i * 15 + j] === '') {
-        BOARD.rows[i].cells[j].style.cursor = "pointer";
+        field.style.cursor = "pointer";
       } else {
-        BOARD.rows[i].cells[j].style.cursor = "auto";
+        field.style.cursor = "auto";
       }
 
       if (TO_BE_PLAYED_BOARD_LETTER_INDEXES.indexOf(i * 15 + j) !== -1) {
-        BOARD.rows[i].cells[j].bgColor = "Yellow";
-
-        BOARD.rows[i].cells[j].style.cursor = "no-drop";
+	if (!field.classList.contains('player_set_tile')) {
+	  field.classList.add('player_set_tile');
+        }
+        field.style.cursor = "no-drop";
       } else {
-        BOARD.rows[i].cells[j].bgColor = "White";
+       field.classList.remove('player_set_tile');
       }
     }
   }

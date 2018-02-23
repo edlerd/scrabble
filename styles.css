@@ -70,19 +70,19 @@ td {
 }
 
 .tw {
-  background-color:#E60000;
+  background:#E60000;
 }
 .dw {
-  background-color:#F86969;
+  background:#F86969;
 }
 .tl {
-  background-color:#3675FA;
+  background:#3675FA;
 }
 .dl {
-  background-color:#22ACD8;
+  background:#22ACD8;
 }
 .start {
-  background-color:#ff5500;
+  background:#ff5500;
 }
 
 .color_instruction {
@@ -102,4 +102,12 @@ td {
 
 #your_letters {
   margin-top: 10px;
+}
+
+.input_here {
+  background: #ff0000;
+}
+
+.player_set_tile {
+  background: #ff9900;
 }
