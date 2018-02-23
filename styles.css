@@ -111,3 +111,14 @@ td {
 .player_set_tile {
   background: #ff9900;
 }
+
+.language_selector a {
+  color: #2f2f2d;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+img {
+  margin-right: 5px;
+}
