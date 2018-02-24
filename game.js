@@ -510,14 +510,17 @@ function onSelectSwapTilesClicked() {
 }
 
 function onPerformSwapTiles() {
-  var letters = document.getElementsByClassName('selected_to_switch');
-  for (var i = 0; i < letters.length; i++) {
-    var letter = letters[i].innerHTML.charAt(0);
+  var letterElements = document.getElementsByClassName('selected_to_switch');
+  var droppedLetters = [];
+  for (var i = 0; i < letterElements.length; i++) {
+    var letter = letterElements[i].innerHTML.charAt(0);
     var letter_position = PLAYER_1_LETTERS.indexOf(letter);
     PLAYER_1_LETTERS.splice(letter_position,1);
+    droppedLetters.push(letter);
   }
 
   drawTiles(PLAYER_1_LETTERS);
+  LETTER_STASH.concat(droppedLetters);
   printPlayersLetters();
 
   var button = document.getElementById('pass');
@@ -535,7 +538,7 @@ Array.prototype.insert = function (index, item) {
 
 function incrementAndCheckPassCount() {
   BOTH_PLAYERS_PASS_COUNT += 1;
-  if (BOTH_PLAYERS_PASS_COUNT >= 2) {
+  if (BOTH_PLAYERS_PASS_COUNT >= 4) {
     document.getElementById("move").disabled = true;
     document.getElementById('pass').disabled = false;
     alert(i18n('Das Spiel ist aus.'));
