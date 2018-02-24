@@ -143,12 +143,11 @@ img {
 }
 
 .game {
-  float: left;
+  margin-right: 50px;
 }
 
 .manual {
-  float: right;
-  max-width: 50%;
+  max-width: 550px;
 }
 
 h1, h2 {
@@ -156,7 +155,9 @@ h1, h2 {
 }
 
 .wrapper {
-  max-width: 1300px;
+  max-width: 1150px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
 }
