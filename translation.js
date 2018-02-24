@@ -3,8 +3,8 @@ var TRANSLATION_MAP = {
     "english":"Unset selected letters"
   },
   "Buchstaben tauschen (passen)":{
-    "german":"passen (du kannst Buchstaben abwerfen und nachziehen)",
-    "english":"skip turn (may also drop letters and draw from stash)"
+    "german":"passen",
+    "english":"skip turn"
   },
   "Übrige Buchstaben":{
     "english":"Letters left in stash"
@@ -77,7 +77,8 @@ var TRANSLATION_MAP = {
     "english":"Form a word of at least two letters and place it on the board in such a way that a tile covers the field in the middle of the board. Words can be placed horizontally or vertically. Words must not be placed diagonally. All subsequent letters must be placed in a continuous line, either horizontally or vertically."
   },
   "Aufgabe der Spieler ist es, aus Buchstabensteinen mit unterschiedlichem Wert Wörter zusammenzusetzen und so auszulegen, dass sie nach Art eines Kreuzworträtsels miteinander in Verbindung stehen. Jeder Spieler muss darum bemüht sein, eine möglichst hohe Punktzahl zu erzielen, indem er aus den zur Verfügung stehenden Buchstaben Wörter bildet, deren Buchstabenwert in Kombination mit den Prämienfeldern des Spielplans eine möglichst hohe Punktzahl ergeben. Die in einer Partie erreichbare Gesamtpunktzahl liegt bei etwa 400 bis 800 und mehr, je nach dem spielerischen Können der Beteiligten.":{
-    "english":"The task of the players is to construct words from letter stones with different values and to interpret them in such a way that they are connected with each other according to the type of a crossword puzzle. Each player must strive to achieve the highest possible score by making words out of the available letters, the letter value of which, in combination with the bonus fields of the game plan, results in the highest possible score. The total score that can be achieved in a game is about 400 to 800 and more, depending on the players' ability to play."
+    "german":"Aufgabe der Spieler ist es, aus Buchstabensteinen mit unterschiedlichem Wert Wörter zusammenzusetzen und so auszulegen, dass sie nach Art eines Kreuzworträtsels miteinander in Verbindung stehen. Jeder Spieler muss darum bemüht sein, eine möglichst hohe Punktzahl zu erzielen, indem er aus den zur Verfügung stehenden Buchstaben Wörter bildet, deren Buchstabenwert in Kombination mit den Prämienfeldern des Spielplans eine möglichst hohe Punktzahl ergeben. Dabei gibt es 50 extra Punkte, wenn alle 7 Buchstabensteine von der Hand auf einmal benutzt werden. Die in einer Partie erreichbare Gesamtpunktzahl liegt bei etwa 400 bis 800 und mehr, je nach dem spielerischen Können der Beteiligten.",
+    "english":"The task of the players is to construct words from letter stones with different values and to interpret them in such a way that they are connected with each other according to the type of a crossword puzzle. Each player must strive to achieve the highest possible score by making words out of the available letters, the letter value of which, in combination with the bonus fields of the game plan, results in the highest possible score. There are 50 extra points if all 7 letters from your hand are used at once. The total score that can be achieved in a game is about 400 to 800 and more, depending on the players' ability to play."
   },
   "Felder für Buchstabenprämien":{
     "english":"Letter Award Fields"
@@ -95,6 +96,7 @@ var TRANSLATION_MAP = {
     "english":"Replacement of letter stones"
   },
   "Ein Spieler hat die Möglichkeit einen oder all seine Buchstabensteine auszutauschen, wenn er an der Reihe ist. Er legt die Buchstabensteine mit dem Buchstaben nach unten zur Seite und zieht die gleiche Anzahl neuer Buchstabensteine aus dem Beutel. Die zur Seite gelegten Buchstabensteine werden dann in den Beutel gelegt und mit den anderen Steinen gemischt. Er muss diese Runde dann aussetzen.":{
-    "english":"A player has the possibility to replace one or all of his letter stones when it is his turn. He puts the letter stones with the letter down to the side and pulls the same number of new letter stones out of the bag. The letter stones placed to the side are then placed in the bag and mixed with the other stones. He must then suspend this round."
+    "german":"Du hast die Möglichkeit einen oder alle Buchstabensteine auszutauschen. Wähle die zu tauschenden Buchstaben aus, die gleiche Anzahl neuer Buchstabensteine bekommst du aus den übrigen Buchstaben. Die zur abgelegten Buchstabensteine werden dann zurück zum Vorrat gegeben. Du musst diese Runde dann aussetzen.",
+    "english":"You have the possibility to replace one or all of your letter stones when it is your turn. Select the letter stones to be abandoned. The same number of new letter stones will be drawn form the stash. The abandoned letter stones are then placed in the stash. You must then suspend this round."
   }
 };

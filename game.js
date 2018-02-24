@@ -459,6 +459,10 @@ function checkValidStateAndCalculatePoints() {
     }
   }
 
+  if (TO_BE_PLAYED_BOARD_LETTER_INDEXES.length === 7) {
+    points += 50;
+  }
+
   return points;
 }
 
@@ -509,6 +513,11 @@ function onLetterToSwapClicked(elem) {
 function onSelectSwapTilesClicked() {
   takeBackCurrentTiles();
 
+  if (LETTER_STASH.length === 0) {
+    onPerformSwapTiles();
+    return;
+  }
+
   var buttons=document.getElementsByClassName('hand_letter');
   for (var i=0; i<buttons.length; i++) {
     buttons[i].onclick = onLetterToSwapClicked;
@@ -548,11 +557,30 @@ Array.prototype.insert = function (index, item) {
 
 function incrementAndCheckPassCount() {
   BOTH_PLAYERS_PASS_COUNT += 1;
-  if (BOTH_PLAYERS_PASS_COUNT >= 4) {
-    document.getElementById("move").disabled = true;
-    document.getElementById('pass').disabled = false;
-    alert(i18n('Das Spiel ist aus.'));
+  if (BOTH_PLAYERS_PASS_COUNT >= 4 || PLAYER_1_LETTERS.length === 0 || PLAYER_2_LETTERS.length === 0) {
+    endGame();
   }
+}
+
+function endGame() {
+  for (var i = 0; i < PLAYER_1_LETTERS.length; i++) {
+    var letter = PLAYER_1_LETTERS[i];
+    PLAYER_1_POINTS -= POINTS_PER_LETTER[letter];
+  }
+
+  for (i = 0; i < PLAYER_2_LETTERS.length; i++) {
+    letter = PLAYER_2_LETTERS[i];
+    PLAYER_2_POINTS -= POINTS_PER_LETTER[letter];
+  }
+
+  document.getElementById("move").disabled = true;
+  document.getElementById('pass').disabled = true;
+
+  alert(
+    i18n('Das Spiel ist aus.') + '\n' +
+    i18n("DU") + ": " + PLAYER_1_POINTS + ' ' + i18n("punkte") + '\n' +
+    i18n("KI") + ": " + PLAYER_2_POINTS + ' ' + i18n("punkte")
+  );
 }
 
 /**
@@ -712,12 +740,6 @@ function computerMove() {
 
   PLAYER_2_POINTS += MAX_POINTS;
 
-  if (MAX_POINTS === 0) {
-    incrementAndCheckPassCount();
-  } else {
-    BOTH_PLAYERS_PASS_COUNT = 0;
-  }
-
   LETTERS_PLAYED_BY_KI_INDEXES = [];
   for (var i in MAX_RESULT) {
     LETTERS_PLAYED_BY_KI_INDEXES.push(parseInt(i));
@@ -728,6 +750,12 @@ function computerMove() {
 
   TO_BE_PLAYED_BOARD_LETTER_INDEXES.length=0;
   drawTiles(PLAYER_2_LETTERS);
+
+  if (MAX_POINTS === 0) {
+    incrementAndCheckPassCount();
+  } else {
+    BOTH_PLAYERS_PASS_COUNT = 0;
+  }
   printBoard();
 }
 
