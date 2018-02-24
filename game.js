@@ -51,7 +51,7 @@ function getConfigUrl() {
 }
 
 function i18n(text) {
-  var lang = getUrlParameterByName('lang');
+  var lang = getUrlParameterByName('lang') || LANG_GERMAN;
 
   if (TRANSLATION_MAP[text] && TRANSLATION_MAP[text][lang]) {
     return TRANSLATION_MAP[text][lang];
@@ -180,7 +180,7 @@ function letterClicked(elem) {
 function updatePlayButton() {
   var points = checkValidStateAndCalculatePoints();
   if (points) {
-    document.getElementById("move").innerHTML = i18n("spielen") + " (" + points + ")";
+    document.getElementById("move").innerHTML = i18n("spielen") + " (" + i18n("für") + " " + points + " " + i18n("punkte") + ")";
     document.getElementById("move").disabled = false;
   } else {
     document.getElementById("move").innerHTML = i18n("spielen");

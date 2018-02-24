@@ -3,7 +3,8 @@ var TRANSLATION_MAP = {
     "english":"Unset selected letters"
   },
   "Buchstaben tauschen (passen)":{
-    "english":"swap letters (skips this turn)"
+    "german":"passen (du kannst Buchstaben abwerfen und nachziehen)",
+    "english":"skip turn (may also drop letters and draw from stash)"
   },
   "Übrige Buchstaben":{
     "english":"Letters left in stash"
@@ -61,5 +62,11 @@ var TRANSLATION_MAP = {
   },
   "unbesiegbar":{
     "english":"unbeatable"
+  },
+  "für":{
+    "english":"for"
+  },
+  "punkte":{
+    "english":"points"
   }
 };

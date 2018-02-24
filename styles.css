@@ -1,6 +1,7 @@
 body {
   background: #3b874b;
   font-family: Verdana,Arial,Helvetica,sans-serif;
+  padding: 20px;
 }
 
 table {
@@ -121,4 +122,31 @@ td {
 
 img {
   margin-right: 5px;
+}
+
+.button {
+  box-shadow: rgb(202, 239, 171) 0px 1px 0px 0px inset;
+  border-radius: 3px;
+  border: 1px solid rgb(38, 138, 22);
+  cursor: pointer;
+  font-weight: bold;
+  padding: 6px;
+  background: linear-gradient(rgb(92, 184, 17) 5%, rgb(119, 212, 42) 100%) rgb(92, 184, 17);
+}
+
+.button:disabled, .button[disabled] {
+  cursor: auto;
+}
+
+.game {
+  float: left;
+}
+
+.manual {
+  float: right;
+  max-width: 50%;
+}
+
+h1, h2 {
+  font-size: 100%;
 }
