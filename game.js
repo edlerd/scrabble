@@ -173,6 +173,7 @@ function letterClicked(elem) {
   BOARD_LETTERS[x*15 + y] = letter;
   PLAYER_1_LETTERS.splice(letter_position,1);
   TO_BE_PLAYED_BOARD_LETTER_INDEXES.push(x*15 + y);
+  LETTERS_PLAYED_BY_KI_INDEXES = [];
   printPlayersLetters();
   printBoard();
   updatePlayButton();
@@ -717,13 +718,14 @@ function computerMove() {
     BOTH_PLAYERS_PASS_COUNT = 0;
   }
 
+  LETTERS_PLAYED_BY_KI_INDEXES = [];
   for (var i in MAX_RESULT) {
+    LETTERS_PLAYED_BY_KI_INDEXES.push(parseInt(i));
     var letter_pos = PLAYER_2_LETTERS.indexOf(MAX_RESULT[i]);
     PLAYER_2_LETTERS.splice(letter_pos,1);
     BOARD_LETTERS[i] = MAX_RESULT[i];
   }
 
-  LETTERS_PLAYED_BY_KI_INDEXES = TO_BE_PLAYED_BOARD_LETTER_INDEXES;
   TO_BE_PLAYED_BOARD_LETTER_INDEXES.length=0;
   drawTiles(PLAYER_2_LETTERS);
   printBoard();
