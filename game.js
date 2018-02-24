@@ -24,7 +24,7 @@ var LETTER_STASH;
 var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
 const LANG_ENGLISH = 'english';
-const LANG_GERMAN = 'deutsch';
+const LANG_GERMAN = 'german';
 const ENGLISH_CONFIG_URL = 'config/english.jsonp';
 const GERMAN_CONFIG_URL = 'config/german.jsonp';
 loadLanguageConfig();
