@@ -18,6 +18,7 @@
 var BOARD = null; // future pointer to dom element
 var BOARD_LETTERS = [];
 var TO_BE_PLAYED_BOARD_LETTER_INDEXES = [];
+var LETTERS_PLAYED_BY_KI_INDEXES = [];
 
 var LETTER_STASH;
 var POINTS_PER_LETTER;
@@ -217,12 +218,20 @@ function printBoard() {
       }
 
       if (TO_BE_PLAYED_BOARD_LETTER_INDEXES.indexOf(i * 15 + j) !== -1) {
-	if (!field.classList.contains('player_set_tile')) {
-	  field.classList.add('player_set_tile');
+	      if (!field.classList.contains('player_set_tile')) {
+	        field.classList.add('player_set_tile');
         }
         field.style.cursor = "no-drop";
       } else {
        field.classList.remove('player_set_tile');
+      }
+
+      if (LETTERS_PLAYED_BY_KI_INDEXES.indexOf(i * 15 + j) !== -1) {
+        if (!field.classList.contains('ki_set_tile')) {
+          field.classList.add('ki_set_tile');
+        }
+      } else {
+        field.classList.remove('ki_set_tile');
       }
     }
   }
@@ -714,11 +723,9 @@ function computerMove() {
     BOARD_LETTERS[i] = MAX_RESULT[i];
   }
 
+  LETTERS_PLAYED_BY_KI_INDEXES = TO_BE_PLAYED_BOARD_LETTER_INDEXES;
   TO_BE_PLAYED_BOARD_LETTER_INDEXES.length=0;
-
-  // fill ki letters if necessary
   drawTiles(PLAYER_2_LETTERS);
-
   printBoard();
 }
 

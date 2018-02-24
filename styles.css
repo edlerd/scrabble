@@ -113,6 +113,10 @@ td {
   background: #ff9900;
 }
 
+.ki_set_tile {
+  border: 1px solid #ff9900;
+}
+
 .language_selector a {
   color: #2f2f2d;
   margin-top: 20px;
