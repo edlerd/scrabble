@@ -196,6 +196,10 @@ function drawTiles(player_var) {
     player_var.push(LETTER_STASH[i]);
     LETTER_STASH.splice(i,1);
   }
+
+  if (player_var.length === 0) {
+    endGame();
+  }
 }
 
 function printPlayersLetters() {
@@ -557,7 +561,7 @@ Array.prototype.insert = function (index, item) {
 
 function incrementAndCheckPassCount() {
   BOTH_PLAYERS_PASS_COUNT += 1;
-  if (BOTH_PLAYERS_PASS_COUNT >= 4 || PLAYER_1_LETTERS.length === 0 || PLAYER_2_LETTERS.length === 0) {
+  if (BOTH_PLAYERS_PASS_COUNT >= 4) {
     endGame();
   }
 }

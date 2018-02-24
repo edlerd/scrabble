@@ -96,7 +96,7 @@ var TRANSLATION_MAP = {
     "english":"Replacement of letter stones"
   },
   "Ein Spieler hat die Möglichkeit einen oder all seine Buchstabensteine auszutauschen, wenn er an der Reihe ist. Er legt die Buchstabensteine mit dem Buchstaben nach unten zur Seite und zieht die gleiche Anzahl neuer Buchstabensteine aus dem Beutel. Die zur Seite gelegten Buchstabensteine werden dann in den Beutel gelegt und mit den anderen Steinen gemischt. Er muss diese Runde dann aussetzen.":{
-    "german":"Du hast die Möglichkeit einen oder alle Buchstabensteine auszutauschen. Wähle die zu tauschenden Buchstaben aus, die gleiche Anzahl neuer Buchstabensteine bekommst du aus den übrigen Buchstaben. Die zur abgelegten Buchstabensteine werden dann zurück zum Vorrat gegeben. Du musst diese Runde dann aussetzen.",
+    "german":"Du hast die Möglichkeit einen oder alle Buchstabensteine auszutauschen. Wähle die zu tauschenden Buchstaben aus, die gleiche Anzahl neuer Buchstabensteine bekommst du aus den übrigen Buchstaben. Die abgelegten Buchstabensteine werden dann zurück zum Vorrat gegeben. Du musst diese Runde dann aussetzen.",
     "english":"You have the possibility to replace one or all of your letter stones when it is your turn. Select the letter stones to be abandoned. The same number of new letter stones will be drawn form the stash. The abandoned letter stones are then placed in the stash. You must then suspend this round."
   }
 };
