@@ -154,3 +154,9 @@ img {
 h1, h2 {
   font-size: 100%;
 }
+
+.wrapper {
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+}
