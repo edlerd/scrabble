@@ -24,6 +24,7 @@ if (!$playerIds) {
 $game = new Game();
 $game->boardLetters = array_fill(0, 225, '');
 $game->bothPlayerPassCount = 0;
+$game->isFinished = false;
 $game->language = $player->language;
 $game->playerIds = $playerIds;
 $game->playerToMoveId = $player->id;

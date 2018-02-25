@@ -125,7 +125,7 @@ function sendSetTilesRequest(setLettersWithIndex, points, onDone) {
   var request = new XMLHttpRequest();
   request.open(
     "GET",
-    '../3_set_tiles_game.php?playerId=' + PLAYER_ID + '&points=' + points + '&setLettersWithIndex=' + JSON.stringify(setLettersWithIndex),
+    '../3_set_tiles.php?playerId=' + PLAYER_ID + '&points=' + points + '&setLettersWithIndex=' + JSON.stringify(setLettersWithIndex),
     true
   );
   request.onreadystatechange = function()
@@ -136,9 +136,15 @@ function sendSetTilesRequest(setLettersWithIndex, points, onDone) {
       BOARD_LETTERS = GAME_STATE.boardLetters;
       PLAYER_LETTERS = GAME_STATE.yourLetters;
       PLAYER_1_POINTS = GAME_STATE.playerScores.you;
+      PLAYER_2_POINTS = GAME_STATE.playerScores.other;
       LETTER_STASH_SIZE = parseInt(GAME_STATE.stashSize);
       IS_MY_MOVE = GAME_STATE.yourTurn;
+
       onDone();
+
+      if (GAME_STATE.isFinished) {
+        endGame();
+      }
     }
   };
   request.send(null);
@@ -148,7 +154,7 @@ function sendGetOtherPlayersMoveRequest(onKeepWaiting, onDone) {
   var request = new XMLHttpRequest();
   request.open(
     "GET",
-    '../4_get_other_players_move_game.php?playerId=' + PLAYER_ID,
+    '../4_get_other_players_move.php?playerId=' + PLAYER_ID,
     true
   );
   request.onreadystatechange = function()
@@ -156,6 +162,7 @@ function sendGetOtherPlayersMoveRequest(onKeepWaiting, onDone) {
     if (request.readyState === 4) {
       GAME_STATE = JSON.parse(request.responseText);
       BOARD_LETTERS = GAME_STATE.boardLetters;
+      PLAYER_1_POINTS = GAME_STATE.playerScores.you;
       PLAYER_2_POINTS = GAME_STATE.playerScores.other;
       LETTERS_PLAYED_BY_OPPONENT_INDEXES = GAME_STATE.recentSetIndexes;
       LETTER_STASH_SIZE = parseInt(GAME_STATE.stashSize);
@@ -163,6 +170,10 @@ function sendGetOtherPlayersMoveRequest(onKeepWaiting, onDone) {
 
       if (IS_MY_MOVE) {
         onDone();
+
+        if (GAME_STATE.isFinished) {
+          endGame();
+        }
       } else {
         onKeepWaiting();
       }
@@ -175,7 +186,7 @@ function sendPassRequest(droppedLetters, onDone) {
   var request = new XMLHttpRequest();
   request.open(
     "GET",
-    '../5_pass_turn_game.php?playerId=' + PLAYER_ID + '&droppedLetters=' + JSON.stringify(droppedLetters),
+    '../5_skip_turn.php?playerId=' + PLAYER_ID + '&droppedLetters=' + JSON.stringify(droppedLetters),
     true
   );
   request.onreadystatechange = function()
@@ -183,10 +194,16 @@ function sendPassRequest(droppedLetters, onDone) {
     if (request.readyState === 4) {
       GAME_STATE = JSON.parse(request.responseText);
       LETTER_STASH_SIZE = parseInt(GAME_STATE.stashSize);
+      PLAYER_1_POINTS = GAME_STATE.playerScores.you;
+      PLAYER_2_POINTS = GAME_STATE.playerScores.other;
       PLAYER_LETTERS = GAME_STATE.yourLetters;
       IS_MY_MOVE = GAME_STATE.yourTurn;
 
       onDone();
+
+      if (GAME_STATE.isFinished) {
+        endGame();
+      }
     }
   };
   request.send(null);

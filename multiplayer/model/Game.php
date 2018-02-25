@@ -11,6 +11,7 @@ class Game {
     public $boardLetters;
     public $bothPlayerPassCount;
     public $recentSetIndexes;
+    public $isFinished;
 
     public function drawTiles() {
         foreach ($this->playerLetters as $playerId => $playerLetters) {
@@ -36,6 +37,7 @@ class Game {
     public function getResponse(string $playerId): array {
         return [
             'boardLetters' => $this->boardLetters,
+            'isFinished' => $this->isFinished,
             'playerScores' => [
                 'you' => $this->playerScores[$playerId],
                 'other' => $this->playerScores[$this->getOtherPlayerId($playerId)],
@@ -44,5 +46,46 @@ class Game {
             'yourLetters' => $this->playerLetters[$playerId],
             'yourTurn' => $this->playerToMoveId === $playerId,
         ];
+    }
+
+    public function calculateEnding() {
+        if ($this->isFinished || !$this->checkEnded()) {
+            return false;
+        }
+
+        $this->isFinished = true;
+
+        $scoreArray = $this->getScoreArray();
+        foreach ($this->playerLetters as $playerId => $letters) {
+            foreach ($letters as $char) {
+                $this->playerScores[$playerId] -= $scoreArray[$char];
+            }
+        }
+
+        return true;
+    }
+
+    private function getScoreArray(): array {
+        switch ($this->language) {
+            case 'german':
+                return German::LETTER_POINTS;
+            case 'english':
+            default:
+                return English::LETTER_POINTS;
+        }
+    }
+
+    private function checkEnded(): bool {
+        if ($this->bothPlayerPassCount === count($this->playerIds) * 2) {
+            return true;
+        }
+
+        foreach ($this->playerLetters as $playerId => $playerLetters) {
+            if (count($playerLetters) === 0 && count($this->stashLetters) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

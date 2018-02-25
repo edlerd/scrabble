@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -8,8 +9,11 @@
     <title>Scrabble Multiplayer</title>
     <script>
       function showWaiting() {
-        document.getElementById("registerForm").style.visibility = 'hidden';
-        document.getElementById("waitingLayer").style.visibility = 'visible';
+        var form = document.getElementById("registerForm");
+        if (!form.checkValidity || form.checkValidity()) {
+          document.getElementById("registerForm").style.visibility = 'hidden';
+          document.getElementById("waitingLayer").style.visibility = 'visible';
+        }
       }
     </script>
 </head>
@@ -18,7 +22,7 @@
 <h1>Join or start a multiplayer scrabble game</h1>
 <form METHOD="post" action="0_register.php" id="registerForm">
     <label>
-        Name: <input name="playerName">
+        Name: <input name="playerName" type="text" required="required" pattern="[A-Za-z0-9]{3,20}">
     </label>
     <label>
         Language: <select name="language">
