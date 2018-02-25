@@ -27,6 +27,7 @@ var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
 
 var IS_MY_MOVE;
+var IS_GAME_FINISHED;
 
 var PLAYER_ID = getUrlParameterByName('playerId');
 var PLAYER_LETTERS = [];
@@ -112,6 +113,8 @@ function initializeMultiplayer() {
       GAME_STATE = JSON.parse(request.responseText);
       BOARD_LETTERS = GAME_STATE.boardLetters;
       OPPONENT_NAME = GAME_STATE.otherPlayersName;
+      PLAYER_1_POINTS = GAME_STATE.playerScores.you;
+      PLAYER_2_POINTS = GAME_STATE.playerScores.other;
       PLAYER_LETTERS = GAME_STATE.yourLetters;
       LETTER_STASH_SIZE = parseInt(GAME_STATE.stashSize);
       IS_MY_MOVE = GAME_STATE.yourTurn;
@@ -575,6 +578,10 @@ function onFinishMoveClick() {
 }
 
 function waitForOtherPlayersMove() {
+  if (IS_GAME_FINISHED) {
+    return;
+  }
+
   updatePlayButton();
 
   document.getElementById("input_container").innerHTML='waiting for other player';
@@ -645,8 +652,13 @@ function onPerformSwapTiles() {
 }
 
 function endGame() {
+  IS_GAME_FINISHED = true;
+
   document.getElementById("move").disabled = true;
   document.getElementById('pass').disabled = true;
+
+  document.getElementById("input_container").innerHTML='game over <a href="../" style="color:#ff9900">start new game</a>';
+  document.getElementById("input_container").style.display= "block";
 
   alert(
     i18n('Das Spiel ist aus.') + '\n' +
