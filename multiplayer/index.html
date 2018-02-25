@@ -1,0 +1,32 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="description" content="An open source implementation of the word puzzle scrabble in pure html, js and css."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../styles.css">
+    <title>Scrabble Multiplayer</title>
+    <script>
+      function showWaiting() {
+        document.getElementById("registerForm").style.visibility = 'hidden';
+        document.getElementById("waitingLayer").style.visibility = 'visible';
+      }
+    </script>
+</head>
+<body>
+
+<h1>Join or start a multiplayer scrabble game</h1>
+<form METHOD="post" action="0_register.php" id="registerForm">
+    <label>
+        Name: <input name="playerName">
+    </label>
+    <br/>
+    <button type="submit" onclick="showWaiting()">register</button>
+</form>
+
+<div id="waitingLayer" style="visibility: hidden">
+    Waiting for other player to register
+</div>
+
+</body>
+</html>

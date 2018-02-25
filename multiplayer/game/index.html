@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="description" content="An open source implementation of the word puzzle scrabble in pure html, js and css."/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="game.js"></script>
+  <script type="text/javascript" src="translation.js"></script>
+<title>Scrabble</title>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="game">
+    <table id="board">
+      <tr><td id="s1_1" class="tw" title="Dreifacher Wortwert"><td id="s1_2"><td id="s1_3"><td id="s1_4" class="dl" title="Doppelter Buchstabenwert"><td id="s1_5"><td id="s1_6"><td id="s1_7"><td id="s1_8" class="tw" title="Dreifacher Wortwert"><td id="s1_9"><td id="s1_10"><td id="s1_11"><td id="s1_12" class="dl" title="Doppelter Buchstabenwert"><td id="s1_13"><td id="s1_14"><td id="s1_15" class="tw" title="Dreifacher Wortwert"></tr>
+      <tr><td id="s2_1"><td id="s2_2" class="dw" title="Doppelter Wortwert"><td id="s2_3"><td id="s2_4"><td id="s2_5"><td id="s2_6" class="tl" title="Dreifacher Buchstabenwert"><td id="s2_7"><td id="s2_8"><td id="s2_9"><td id="s2_10" class="tl" title="Dreifacher Buchstabenwert"><td id="s2_11"><td id="s2_12"><td id="s2_13"><td id="s2_14" class="dw" title="Doppelter Wortwert"><td id="s2_15"></tr>
+      <tr><td id="s3_1"><td id="s3_2"><td id="s3_3" class="dw" title="Doppelter Wortwert"><td id="s3_4"><td id="s3_5"><td id="s3_6"><td id="s3_7" class="dl" title="Doppelter Buchstabenwert"><td id="s3_8"><td id="s3_9" class="dl" title="Doppelter Buchstabenwert"><td id="s3_10"><td id="s3_11"><td id="s3_12"><td id="s3_13" class="dw" title="Doppelter Wortwert"><td id="s3_14"><td id="s3_15"></tr>
+      <tr><td id="s4_1" class="dl" title="Doppelter Buchstabenwert"><td id="s4_2"><td id="s4_3"><td id="s4_4" class="dw" title="Doppelter Wortwert"><td id="s4_5"><td id="s4_6"><td id="s4_7"><td id="s4_8" class="dl" title="Doppelter Buchstabenwert"><td id="s4_9"><td id="s4_10"><td id="s4_11"><td id="s4_12" class="dw" title="Doppelter Wortwert"><td id="s4_13"><td id="s4_14"><td id="s4_15" class="dl" title="Doppelter Buchstabenwert"></tr>
+      <tr><td id="s5_1"><td id="s5_2"><td id="s5_3"><td id="s5_4"><td id="s5_5" class="dw" title="Doppelter Wortwert"><td id="s5_6"><td id="s5_7"><td id="s5_8"><td id="s5_9"><td id="s5_10"><td id="s5_11" class="dw" title="Doppelter Wortwert"><td id="s5_12"><td id="s5_13"><td id="s5_14"><td id="s5_15"></tr>
+      <tr><td id="s6_1"><td id="s6_2" class="tl" title="Dreifacher Buchstabenwert"><td id="s6_3"><td id="s6_4"><td id="s6_5"><td id="s6_6" class="tl" title="Dreifacher Buchstabenwert"><td id="s6_7"><td id="s6_8"><td id="s6_9"><td id="s6_10" class="tl" title="Dreifacher Buchstabenwert"><td id="s6_11"><td id="s6_12"><td id="s6_13"><td id="s6_14" class="tl" title="Dreifacher Buchstabenwert"><td id="s6_15"></tr>
+      <tr><td id="s7_1"><td id="s7_2"><td id="s7_3" class="dl" title="Doppelter Buchstabenwert"><td id="s7_4"><td id="s7_5"><td id="s7_6"><td id="s7_7" class="dl" title="Doppelter Buchstabenwert"><td id="s7_8"><td id="s7_9" class="dl" title="Doppelter Buchstabenwert"><td id="s7_10"><td id="s7_11"><td id="s7_12"><td id="s7_13" class="dl" title="Doppelter Buchstabenwert"><td id="s7_14"><td id="s7_15"></tr>
+      <tr><td id="s8_1" class="tw" title="Dreifacher Wortwert"><td id="s8_2"><td id="s8_3"><td id="s8_4" class="dl" title="Doppelter Buchstabenwert"><td id="s8_5"><td id="s8_6"><td id="s8_7"><td id="s8_8" class="start dw"><td id="s8_9"><td id="s8_10"><td id="s8_11"><td id="s8_12" class="dl" title="Doppelter Buchstabenwert"><td id="s8_13"><td id="s8_14"><td id="s8_15" class="tw" title="Dreifacher Wortwert"></tr>
+      <tr><td id="s9_1"><td id="s9_2"><td id="s9_3" class="dl" title="Doppelter Buchstabenwert"><td id="s9_4"><td id="s9_5"><td id="s9_6"><td id="s9_7" class="dl" title="Doppelter Buchstabenwert"><td id="s9_8"><td id="s9_9" class="dl" title="Doppelter Buchstabenwert"><td id="s9_10"><td id="s9_11"><td id="s9_12"><td id="s9_13" class="dl" title="Doppelter Buchstabenwert"><td id="s9_14"><td id="s9_15"></tr>
+      <tr><td id="s10_1"><td id="s10_2" class="tl" title="Dreifacher Buchstabenwert"><td id="s10_3"><td id="s10_4"><td id="s10_5"><td id="s10_6" class="tl" title="Dreifacher Buchstabenwert"><td id="s10_7"><td id="s10_8"><td id="s10_9"><td id="s10_10" class="tl" title="Dreifacher Buchstabenwert"><td id="s10_11"><td id="s10_12"><td id="s10_13"><td id="s10_14" class="tl" title="Dreifacher Buchstabenwert"><td id="s10_15"></tr>
+      <tr><td id="s11_1"><td id="s11_2"><td id="s11_3"><td id="s11_4"><td id="s11_5" class="dw" title="Doppelter Wortwert"><td id="s11_6"><td id="s11_7"><td id="s11_8"><td id="s11_9"><td id="s11_10"><td id="s11_11" class="dw" title="Doppelter Wortwert"><td id="s11_12"><td id="s11_13"><td id="s11_14"><td id="s11_15"></tr>
+      <tr><td id="s12_1" class="dl" title="Doppelter Buchstabenwert"><td id="s12_2"><td id="s12_3"><td id="s12_4" class="dw" title="Doppelter Wortwert"><td id="s12_5"><td id="s12_6"><td id="s12_7"><td id="s12_8" class="dl" title="Doppelter Buchstabenwert"><td id="s12_9"><td id="s12_10"><td id="s12_11"><td id="s12_12" class="dw" title="Doppelter Wortwert"><td id="s12_13"><td id="s12_14"><td id="s12_15" class="dl" title="Doppelter Buchstabenwert"></tr>
+      <tr><td id="s13_1"><td id="s13_2"><td id="s13_3" class="dw" title="Doppelter Wortwert"><td id="s13_4"><td id="s13_5"><td id="s13_6"><td id="s13_7" class="dl" title="Doppelter Buchstabenwert"><td id="s13_8"><td id="s13_9" class="dl" title="Doppelter Buchstabenwert"><td id="s13_10"><td id="s13_11"><td id="s13_12"><td id="s13_13" class="dw" title="Doppelter Wortwert"><td id="s13_14"><td id="s13_15"></tr>
+      <tr><td id="s14_1"><td id="s14_2" class="dw" title="Doppelter Wortwert"><td id="s14_3"><td id="s14_4"><td id="s14_5"><td id="s14_6" class="tl" title="Dreifacher Buchstabenwert"><td id="s14_7"><td id="s14_8"><td id="s14_9"><td id="s14_10" class="tl" title="Dreifacher Buchstabenwert"><td id="s14_11"><td id="s14_12"><td id="s14_13"><td id="s14_14" class="dw" title="Doppelter Wortwert"><td id="s14_15"></tr>
+      <tr><td id="s15_1" class="tw" title="Dreifacher Wortwert"><td id="s15_2"><td id="s15_3"><td id="s15_4" class="dl" title="Doppelter Buchstabenwert"><td id="s15_5"><td id="s15_6"><td id="s15_7"><td id="s15_8" class="tw" title="Dreifacher Wortwert"><td id="s15_9"><td id="s15_10"><td id="s15_11"><td id="s15_12" class="dl" title="Doppelter Buchstabenwert"><td id="s15_13"><td id="s15_14"><td id="s15_15" class="tw" title="Dreifacher Wortwert"></tr>
+    </table>
+    
+    <div id="your_letters"><script>document.write(i18n("Deine Buchstaben"))</script>:</div>
+    <div id="player_1_letters"></div>
+    
+    <button class="button" title="Bei gültigem Spielzug aktiv" onclick="onFinishMoveClick()" id="move"><script>document.write(i18n("spielen"))</script></button>
+    <button class="button" onclick="onSelectSwapTilesClicked()" id="pass"><script>document.write(i18n("Buchstaben tauschen (passen)"))</script></button>
+    
+    <div class="score_container">
+      <div class="player_name"><script>document.write(i18n("DU"))</script>: </div><div class="player_name" id="player_1_points">0</div><br>
+      <div class="player_name" id="opponent_name"><script>document.write(i18n("KI"))</script>: </div><div class="player_name" id="player_2_points">0</div>
+      <div class="letters_left"><script>document.write(i18n("Übrige Buchstaben"))</script>: <span id="letters_left"></span></div>
+    </div>
+
+  </div>
+  
+  <div class="manual">
+  <h1><script>document.write(i18n("Legen des ersten Wortes"))</script></h1>
+  <script>document.write(i18n("Der erste Spieler bildet ein Wort aus mindestens zwei Buchstaben. Er platziert es so auf den Spielplan, dass ein Spielstein das Feld in der Mitte des Spielplans bedeckt. Wörter können waagerecht oder senkrecht gelegt werden. Wörter dürfen nicht diagonal gelegt werden. Alle nachfolgenden Buchstaben müssen in einer Linie durchgehend entweder waagerecht oder senkrecht gelegt werden."))</script><br/>
+  <script>document.write(i18n("Aufgabe der Spieler ist es, aus Buchstabensteinen mit unterschiedlichem Wert Wörter zusammenzusetzen und so auszulegen, dass sie nach Art eines Kreuzworträtsels miteinander in Verbindung stehen. Jeder Spieler muss darum bemüht sein, eine möglichst hohe Punktzahl zu erzielen, indem er aus den zur Verfügung stehenden Buchstaben Wörter bildet, deren Buchstabenwert in Kombination mit den Prämienfeldern des Spielplans eine möglichst hohe Punktzahl ergeben. Die in einer Partie erreichbare Gesamtpunktzahl liegt bei etwa 400 bis 800 und mehr, je nach dem spielerischen Können der Beteiligten."))</script>
+  
+  <h1><script>document.write(i18n("Felder für Buchstabenprämien"))</script></h1>
+  <script>document.write(i18n("Wird ein Buchstabe auf ein hellblaues Feld gesetzt, so verdoppelt sich sein Wert. Wird ein Buchstabe auf ein dunkelblaues Feld gesetzt, so verdreifacht sich sein Wert."))</script>
+  
+  <h1><script>document.write(i18n("Felder für Wortprämien"))</script></h1>
+  <script>document.write(i18n("Wird ein Buchstabe auf ein hellrotes Feld gesetzt, so verdoppelt sich der Wert des gesamten Wortes. Wird ein Buchstabe auf ein dunkelrotes Feld gesetzt, so verdreifacht sich der Wert des gesamten Wortes."))</script>
+  
+  <h1><script>document.write(i18n("Austausch von Buchstabensteinen"))</script></h1>
+  <script>document.write(i18n("Ein Spieler hat die Möglichkeit einen oder all seine Buchstabensteine auszutauschen, wenn er an der Reihe ist. Er legt die Buchstabensteine mit dem Buchstaben nach unten zur Seite und zieht die gleiche Anzahl neuer Buchstabensteine aus dem Beutel. Die zur Seite gelegten Buchstabensteine werden dann in den Beutel gelegt und mit den anderen Steinen gemischt. Er muss diese Runde dann aussetzen."))</script>
+  </div>
+</div>
+
+<div id="input_container"></div>
+
+</body>
+</html>

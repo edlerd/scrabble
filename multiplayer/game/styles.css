@@ -1,0 +1,163 @@
+body {
+  background: #3b874b;
+  font-family: Verdana,Arial,Helvetica,sans-serif;
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  background: #47b75e;
+  border: 1px solid #d4fcdb;
+  min-width: 24px;
+  height: 27px;
+  text-align: center;
+}
+
+.input_letter {
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid orange;
+  background-color: white;
+  color: initial;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+
+#input_container {
+  display: none;
+  border: 1px solid;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  color: white;
+  opacity: 0.7;
+}
+
+.hand_letter {
+  background: #f3e797;
+  font-weight: bold;
+  display: inline-block;
+  text-align: left;
+  margin: 10px;
+  width: 24px;
+  height: 24px;
+  padding-top: 7px;
+  padding-left: 9px;
+}
+.hand_letter_points {
+  display: inline;
+  font-size: 8pt;
+}
+
+.letters_left {
+  display: inline-block;
+  margin-left: 102px;
+  width: 301px;
+}
+
+.player_name {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.tw {
+  background:#E60000;
+}
+.dw {
+  background:#F86969;
+}
+.tl {
+  background:#3675FA;
+}
+.dl {
+  background:#22ACD8;
+}
+.start {
+  background:#ff5500;
+}
+
+.color_instruction {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  margin: 2px;
+}
+
+.score_container {
+  padding: 10px;
+}
+
+#board {
+  font-weight: bold;
+}
+
+#your_letters {
+  margin-top: 10px;
+}
+
+.input_here {
+  background: #ff0000;
+}
+
+.player_set_tile {
+  background: #ff9900;
+}
+
+.ki_set_tile {
+  background: #d3f7db;
+}
+
+.language_selector a {
+  color: #2f2f2d;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+img {
+  margin-right: 5px;
+}
+
+.button {
+  box-shadow: rgb(202, 239, 171) 0px 1px 0px 0px inset;
+  border-radius: 3px;
+  border: 1px solid rgb(38, 138, 22);
+  cursor: pointer;
+  font-weight: bold;
+  padding: 6px;
+  background: linear-gradient(rgb(92, 184, 17) 5%, rgb(119, 212, 42) 100%) rgb(92, 184, 17);
+}
+
+.button:disabled, .button[disabled] {
+  cursor: auto;
+}
+
+.game {
+  margin-right: 50px;
+}
+
+.manual {
+  max-width: 550px;
+}
+
+h1, h2 {
+  font-size: 100%;
+}
+
+.wrapper {
+  max-width: 1150px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
