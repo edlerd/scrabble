@@ -13,27 +13,15 @@ class Game {
     public $recentSetIndexes;
 
     public function drawTiles() {
-        $newPlayerLetters = [];
         foreach ($this->playerLetters as $playerId => $playerLetters) {
-            $missingLetterCount = 7 - count($playerLetters);
-
-            if ($missingLetterCount === 0) {
-                $newPlayerLetters[$playerId] = array_values($playerLetters);
-                continue;
-            }
-
-            $pickedLetterIndexes = array_rand($this->stashLetters, $missingLetterCount);
-            $pickedLetterIndexes = is_array($pickedLetterIndexes) ? $pickedLetterIndexes : [$pickedLetterIndexes];
-            foreach ($pickedLetterIndexes as $id) {
+            while (count($playerLetters) < 7) {
+                $stashSize = count($this->stashLetters);
+                $id = random_int(0, $stashSize - 1);
                 $playerLetters[] = $this->stashLetters[$id];
+                array_splice($this->stashLetters, $id, 1);
             }
-            $newPlayerLetters[$playerId] = array_values($playerLetters);
-            foreach ($pickedLetterIndexes as $id) {
-                unset($this->stashLetters[$id]);
-            }
-            $this->stashLetters = array_values($this->stashLetters);
+            $this->playerLetters[$playerId] = array_values($playerLetters);
         }
-        $this->playerLetters = $newPlayerLetters;
     }
 
     public function getOtherPlayerId(string $playerId): string {
@@ -42,6 +30,7 @@ class Game {
                 return $candidateId;
             }
         }
+        throw new Exception('no other player found');
     }
 
     public function getResponse(string $playerId): array {

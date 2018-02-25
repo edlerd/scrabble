@@ -8,12 +8,12 @@ $player = $playerConnector->get($playerId);
 $playerConnector->setLastSeen($playerId);
 
 if ($player->gameId) {
-    header("Location: game/?playerId=$player->id&lang=english");
+    header("Location: game/?playerId=$player->id&lang=$player->language");
     exit();
 }
 
 $loungeConnector = new LoungeConnector();
-$playerIds = $loungeConnector->getPair($player->id);
+$playerIds = $loungeConnector->getPair($player->id, $player->language);
 
 if (!$playerIds) {
     sleep(5);
@@ -35,7 +35,7 @@ $game->playerScores = [
     $playerIds[0] => 0,
     $playerIds[1] => 0
 ];
-$game->stashLetters = array_values(English::LETTER_STASH);
+$game->stashLetters = array_values($player->language === "english" ? English::LETTER_STASH : German::LETTER_STASH);
 $game->drawTiles();
 
 $gameConnector = new GameConnector();
@@ -48,4 +48,4 @@ $playerTwo = $playerConnector->get($playerIds[1]);
 $playerTwo->gameId = $game->id;
 $playerConnector->save($playerTwo);
 
-header("Location: game/?playerId=$player->id&lang=english");
+header("Location: game/?playerId=$player->id&lang=$player->language");

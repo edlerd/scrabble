@@ -1,7 +1,7 @@
 <?php
 
 class LoungeConnector {
-    const REDIS_LOUNGE_KEY = 'scr_lounge';
+    const REDIS_LOUNGE_KEY = 'scr_lounge:';
 
     private $redis;
 
@@ -11,25 +11,23 @@ class LoungeConnector {
     }
 
     public function add(Player $player) {
-        $this->redis->sAdd(self::REDIS_LOUNGE_KEY, $player->id);
+        $this->redis->sAdd(self::REDIS_LOUNGE_KEY . $player->language, $player->id);
     }
 
-    public function remove(string $playerId) {
-        $this->redis->sRem(self::REDIS_LOUNGE_KEY, $playerId);
-    }
+    public function getPair(string $playerId, string $language) {
+        $key = self::REDIS_LOUNGE_KEY . $language;
 
-    public function getPair(string $playerId) {
-        $reservePlayerId = $this->redis->sRem(self::REDIS_LOUNGE_KEY, $playerId);
+        $reservePlayerId = $this->redis->sRem($key, $playerId);
         if (!$reservePlayerId) {
             return false;
         }
 
         $tryAgain = true;
         while ($tryAgain) {
-            $secondPlayerId = $this->redis->sPop(self::REDIS_LOUNGE_KEY);
+            $secondPlayerId = $this->redis->sPop($key);
 
             if (!$secondPlayerId) {
-                $this->redis->sAdd(self::REDIS_LOUNGE_KEY, $playerId);
+                $this->redis->sAdd($key, $playerId);
                 return false;
             }
 
