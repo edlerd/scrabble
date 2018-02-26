@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="description" content="An open source implementation of the word puzzle scrabble in pure html, js and css."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../styles.css">
+    <title>Scrabble Multiplayer</title>
+    <script>
+      function getUrlParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      setTimeout(
+        function() {
+          var playerId = getUrlParameterByName('playerId');
+          location = '1_matchmaker.php?playerId=' + playerId;
+        },
+        2000
+      );
+    </script>
+</head>
+<body>
+
+<div id="waitingLayer">
+    Waiting for other player to register.<br/>
+    You may start a <a href="https://77177.de/scrabble" target="_blank">single player game</a> while waiting.
+</div>
+
+</body>
+</html>

@@ -590,6 +590,7 @@ function waitForOtherPlayersMove() {
   var onDone = function() {
     printBoard();
     document.getElementById("input_container").style.display= "none";
+    playAlarmOnNoReaction()
   };
 
   setTimeout(
@@ -598,6 +599,25 @@ function waitForOtherPlayersMove() {
     },
     2000
   );
+}
+
+function playAlarmOnNoReaction() {
+  var audio = new Audio('ring.mp3');
+
+  var alarmTimeout = setTimeout(
+    function(){
+      audio.play();
+    },
+    10000
+  );
+
+  document.onmousemove = function(){
+    clearTimeout(alarmTimeout);
+  };
+
+  document.onscroll = function() {
+    clearTimeout();
+  };
 }
 
 function onLetterToSwapClicked(elem) {

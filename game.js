@@ -20,6 +20,8 @@ var BOARD_LETTERS = [];
 var TO_BE_PLAYED_BOARD_LETTER_INDEXES = [];
 var LETTERS_PLAYED_BY_KI_INDEXES = [];
 
+var IS_GAME_FINISHED;
+
 var LETTER_STASH;
 var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
@@ -485,6 +487,10 @@ function setKiMaxStrength(src) {
 }
 
 function startKiMove() {
+  if (IS_GAME_FINISHED) {
+    return;
+  }
+
   updatePlayButton();
 
   document.getElementById("input_container").innerHTML='waiting for ki';
@@ -495,8 +501,10 @@ function startKiMove() {
       // ki_intelligence: the closer to 1 the more clever the ki
       KI_INTELLIGENCE = KI_MAX_INTELLIGENCE;
       computerMove();
-      document.getElementById("input_container").style.display= "none";
-      KI_INTELLIGENCE = 1;
+      if (!IS_GAME_FINISHED) {
+        document.getElementById("input_container").style.display= "none";
+        KI_INTELLIGENCE = 1;
+      }
     },
     100
   );
@@ -567,6 +575,8 @@ function incrementAndCheckPassCount() {
 }
 
 function endGame() {
+  IS_GAME_FINISHED = true;
+
   for (var i = 0; i < PLAYER_1_LETTERS.length; i++) {
     var letter = PLAYER_1_LETTERS[i];
     PLAYER_1_POINTS -= POINTS_PER_LETTER[letter];
@@ -576,6 +586,9 @@ function endGame() {
     letter = PLAYER_2_LETTERS[i];
     PLAYER_2_POINTS -= POINTS_PER_LETTER[letter];
   }
+
+  document.getElementById("input_container").innerHTML='game over <a href="./" style="color:#ff9900">start new game</a>';
+  document.getElementById("input_container").style.display= "block";
 
   document.getElementById("move").disabled = true;
   document.getElementById('pass').disabled = true;

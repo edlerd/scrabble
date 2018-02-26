@@ -16,8 +16,7 @@ $loungeConnector = new LoungeConnector();
 $playerIds = $loungeConnector->getPair($player->id, $player->language);
 
 if (!$playerIds) {
-    sleep(5);
-    header("Location: 1_matchmaker.php?playerId=$player->id");
+    header("Location: lounge.html?playerId=$player->id");
     exit();
 }
 
