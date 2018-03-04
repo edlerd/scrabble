@@ -192,9 +192,17 @@ function updatePlayButton() {
   }
 }
 
+var SEED = Date.now();
+seededRandom = function(max, min) {
+  SEED = (SEED * 9301 + 49297) % 233280;
+  var rnd = SEED / 233280;
+
+  return Math.floor(min + rnd * (max - min));
+}
+
 function drawTiles(player_var) {
   while (player_var.length < 7 && LETTER_STASH.length > 0) {
-    var i = Math.floor(Math.random() * LETTER_STASH.length);
+    var i = seededRandom(0, LETTER_STASH.length);
     player_var.push(LETTER_STASH[i]);
     LETTER_STASH.splice(i,1);
   }
