@@ -680,8 +680,13 @@ function endGame() {
   document.getElementById("input_container").innerHTML='game over <a href="../" style="color:#ff9900">start new game</a>';
   document.getElementById("input_container").style.display= "block";
 
+  var winText = i18n('Du gewinnst.');
+  var looseText = i18n('Du verlierst.');
+  var resultText = PLAYER_1_POINTS > PLAYER_2_POINTS ? winText : looseText;
+
   alert(
     i18n('Das Spiel ist aus.') + '\n' +
+    resultText + '\n' +
     i18n("DU") + ": " + PLAYER_1_POINTS + ' ' + i18n("punkte") + '\n' +
     OPPONENT_NAME + ": " + PLAYER_2_POINTS + ' ' + i18n("punkte")
   );
