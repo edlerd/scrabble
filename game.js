@@ -193,7 +193,7 @@ function updatePlayButton() {
 }
 
 var SEED = Date.now();
-seededRandom = function(max, min) {
+function seededRandom(max, min) {
   SEED = (SEED * 9301 + 49297) % 233280;
   var rnd = SEED / 233280;
 
