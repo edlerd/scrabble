@@ -20,6 +20,8 @@ var BOARD_LETTERS = [];
 var TO_BE_PLAYED_BOARD_LETTER_INDEXES = [];
 var LETTERS_PLAYED_BY_KI_INDEXES = [];
 
+var IS_GAME_FINISHED;
+
 var LETTER_STASH;
 var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
@@ -190,9 +192,17 @@ function updatePlayButton() {
   }
 }
 
+var SEED = Date.now();
+function seededRandom(max, min) {
+  SEED = (SEED * 9301 + 49297) % 233280;
+  var rnd = SEED / 233280;
+
+  return Math.floor(min + rnd * (max - min));
+}
+
 function drawTiles(player_var) {
   while (player_var.length < 7 && LETTER_STASH.length > 0) {
-    var i = Math.floor(Math.random() * LETTER_STASH.length);
+    var i = seededRandom(0, LETTER_STASH.length);
     player_var.push(LETTER_STASH[i]);
     LETTER_STASH.splice(i,1);
   }
@@ -485,6 +495,10 @@ function setKiMaxStrength(src) {
 }
 
 function startKiMove() {
+  if (IS_GAME_FINISHED) {
+    return;
+  }
+
   updatePlayButton();
 
   document.getElementById("input_container").innerHTML='waiting for ki';
@@ -495,8 +509,10 @@ function startKiMove() {
       // ki_intelligence: the closer to 1 the more clever the ki
       KI_INTELLIGENCE = KI_MAX_INTELLIGENCE;
       computerMove();
-      document.getElementById("input_container").style.display= "none";
-      KI_INTELLIGENCE = 1;
+      if (!IS_GAME_FINISHED) {
+        document.getElementById("input_container").style.display= "none";
+        KI_INTELLIGENCE = 1;
+      }
     },
     100
   );
@@ -567,6 +583,8 @@ function incrementAndCheckPassCount() {
 }
 
 function endGame() {
+  IS_GAME_FINISHED = true;
+
   for (var i = 0; i < PLAYER_1_LETTERS.length; i++) {
     var letter = PLAYER_1_LETTERS[i];
     PLAYER_1_POINTS -= POINTS_PER_LETTER[letter];
@@ -577,11 +595,19 @@ function endGame() {
     PLAYER_2_POINTS -= POINTS_PER_LETTER[letter];
   }
 
+  document.getElementById("input_container").innerHTML='game over <a href="./" style="color:#ff9900">start new game</a>';
+  document.getElementById("input_container").style.display= "block";
+
   document.getElementById("move").disabled = true;
   document.getElementById('pass').disabled = true;
 
+  var winText = i18n('Du gewinnst.');
+  var looseText = i18n('Du verlierst.');
+  var resultText = PLAYER_1_POINTS > PLAYER_2_POINTS ? winText : looseText;
+
   alert(
     i18n('Das Spiel ist aus.') + '\n' +
+    resultText + '\n' +
     i18n("DU") + ": " + PLAYER_1_POINTS + ' ' + i18n("punkte") + '\n' +
     i18n("KI") + ": " + PLAYER_2_POINTS + ' ' + i18n("punkte")
   );

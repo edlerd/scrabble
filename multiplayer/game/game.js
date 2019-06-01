@@ -27,6 +27,7 @@ var POINTS_PER_LETTER;
 var LANGUAGE_CONFIG;
 
 var IS_MY_MOVE;
+var IS_GAME_FINISHED;
 
 var PLAYER_ID = getUrlParameterByName('playerId');
 var PLAYER_LETTERS = [];
@@ -112,6 +113,8 @@ function initializeMultiplayer() {
       GAME_STATE = JSON.parse(request.responseText);
       BOARD_LETTERS = GAME_STATE.boardLetters;
       OPPONENT_NAME = GAME_STATE.otherPlayersName;
+      PLAYER_1_POINTS = GAME_STATE.playerScores.you;
+      PLAYER_2_POINTS = GAME_STATE.playerScores.other;
       PLAYER_LETTERS = GAME_STATE.yourLetters;
       LETTER_STASH_SIZE = parseInt(GAME_STATE.stashSize);
       IS_MY_MOVE = GAME_STATE.yourTurn;
@@ -575,6 +578,10 @@ function onFinishMoveClick() {
 }
 
 function waitForOtherPlayersMove() {
+  if (IS_GAME_FINISHED) {
+    return;
+  }
+
   updatePlayButton();
 
   document.getElementById("input_container").innerHTML='waiting for other player';
@@ -583,6 +590,7 @@ function waitForOtherPlayersMove() {
   var onDone = function() {
     printBoard();
     document.getElementById("input_container").style.display= "none";
+    playAlarmOnNoReaction()
   };
 
   setTimeout(
@@ -591,6 +599,25 @@ function waitForOtherPlayersMove() {
     },
     2000
   );
+}
+
+function playAlarmOnNoReaction() {
+  var audio = new Audio('ring.mp3');
+
+  var alarmTimeout = setTimeout(
+    function(){
+      audio.play();
+    },
+    10000
+  );
+
+  document.onmousemove = function(){
+    clearTimeout(alarmTimeout);
+  };
+
+  document.onscroll = function() {
+    clearTimeout();
+  };
 }
 
 function onLetterToSwapClicked(elem) {
@@ -645,11 +672,21 @@ function onPerformSwapTiles() {
 }
 
 function endGame() {
+  IS_GAME_FINISHED = true;
+
   document.getElementById("move").disabled = true;
   document.getElementById('pass').disabled = true;
 
+  document.getElementById("input_container").innerHTML='game over <a href="../" style="color:#ff9900">start new game</a>';
+  document.getElementById("input_container").style.display= "block";
+
+  var winText = i18n('Du gewinnst.');
+  var looseText = i18n('Du verlierst.');
+  var resultText = PLAYER_1_POINTS > PLAYER_2_POINTS ? winText : looseText;
+
   alert(
     i18n('Das Spiel ist aus.') + '\n' +
+    resultText + '\n' +
     i18n("DU") + ": " + PLAYER_1_POINTS + ' ' + i18n("punkte") + '\n' +
     OPPONENT_NAME + ": " + PLAYER_2_POINTS + ' ' + i18n("punkte")
   );

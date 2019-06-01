@@ -12,7 +12,6 @@
         var form = document.getElementById("registerForm");
         if (!form.checkValidity || form.checkValidity()) {
           document.getElementById("registerForm").style.visibility = 'hidden';
-          document.getElementById("waitingLayer").style.visibility = 'visible';
         }
       }
     </script>
@@ -32,10 +31,6 @@
     </label>
     <button type="submit" onclick="showWaiting()">register</button>
 </form>
-
-<div id="waitingLayer" style="visibility: hidden">
-    Waiting for other player to register
-</div>
 
 </body>
 </html>
