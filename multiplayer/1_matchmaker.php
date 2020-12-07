@@ -5,6 +5,9 @@ $playerId = $_GET['playerId'];
 
 $playerConnector = new PlayerConnector();
 $player = $playerConnector->get($playerId);
+if (!$player) {
+	die('invalid id');
+}
 $playerConnector->setLastSeen($playerId);
 
 if ($player->gameId) {

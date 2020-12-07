@@ -30,12 +30,17 @@ class PlayerConnector {
         return $player;
     }
 
-    public function get(string $playerId): Player {
+    public function get(string $playerId): ?Player {
         $key = $this->getKeyByPlayerId($playerId);
         $json = $this->redis->get($key);
 
+	$player = new Player();
+
+	if (!$json) {
+		return null;
+	}
+
         $data = json_decode($json, true);
-        $player = new Player();
         foreach ($data as $key => $value) $player->{$key} = $value;
 
         return $player;
